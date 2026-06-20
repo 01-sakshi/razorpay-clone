@@ -32,7 +32,7 @@ public class ApiKey {
     private Environment environment;
 
     @Column(nullable = false)
-    //@Builder.Default
+    //@Builder.Default   TODO: doubt
     private Boolean enabled = true;
 
     private Instant lastUsedAt;

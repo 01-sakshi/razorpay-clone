@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(
-        name = "vault-card"
+        name = "vault_card"
 )
 @Getter
 @Setter

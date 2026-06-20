@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Table(
-        name = "webhook-event"
+        name = "webhook_event"
 )
 @Getter
 @Setter
@@ -42,18 +42,16 @@ public class WebhookEvent {
 
     private String targetUrl;
 
-    /* Doubt
-        private Instant nextRetryAt;
+    private Instant nextRetryAt;
 
-        private Instant lastAttemptAt;
+    private Instant lastAttemptAt;
 
-        private Integer lastResponseCode;
+    private Integer lastResponseCode;
 
-        @Column(length = 1000)
-        private String lastResponseBody;
-    */
+    @Column(length = 1000)
+    private String lastResponseBody;
+
     private Instant deliveredAt;
     private Instant createdAt;
-
 
 }

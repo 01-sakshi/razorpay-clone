@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Entity
 @Table(
-        name = "settlement-payment"
+        name = "settlement_payment"
 )
 @Getter
 @Setter
@@ -15,8 +15,8 @@ public class SettlementPayment {
     @EmbeddedId
     private SettlementPaymentId settlementPaymentId;
 
-//    @MapsId("settlementId")
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinColumn(name = "settlement_id", nullable = false)
-//    private Settlement settlement;    //Doubt
+    @MapsId("settlementId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "settlement_id", nullable = false)
+    private Settlement settlement;
 }

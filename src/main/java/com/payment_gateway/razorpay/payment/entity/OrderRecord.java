@@ -30,6 +30,9 @@ public class OrderRecord {
     @Column(nullable = false, length = 20)
     private OrderStatus status = OrderStatus.CREATED;
 
+    @Column(nullable = false, length = 30)
+    private String idempotencyKey;
+
     @Embedded
     private Money amount;
 

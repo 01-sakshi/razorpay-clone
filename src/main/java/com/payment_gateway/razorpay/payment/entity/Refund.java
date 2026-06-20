@@ -19,7 +19,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Refund {
-
+//Why are we storing refund details in payment gateway?
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(
-        name = "card-token"
+        name = "card_token"
 )
 @Getter
 @Setter

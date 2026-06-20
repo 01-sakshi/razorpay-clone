@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(
-        name = "transition_log"
+        name = "payment_transition_log"
 )
 @Getter
 @Setter

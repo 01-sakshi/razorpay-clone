@@ -31,5 +31,4 @@ public class MerchantWebhookConfig {
 
     @Column(nullable = false, length = 50)
     private String eventTypes;  //for which all events, webhook should be sent to merchant
-
 }

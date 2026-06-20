@@ -19,6 +19,7 @@ import java.util.UUID;
 public class DlqEvent {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
