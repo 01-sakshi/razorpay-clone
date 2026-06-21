@@ -1,9 +1,9 @@
 package com.payment_gateway.razorpay.merchant.entity;
 
+import com.payment_gateway.razorpay.common.constants.Constants;
 import com.payment_gateway.razorpay.common.enums.Environment;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -12,6 +12,9 @@ import java.util.UUID;
 @Table(name = "api_key")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ApiKey {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -32,15 +35,20 @@ public class ApiKey {
     private Environment environment;
 
     @Column(nullable = false)
-    //@Builder.Default   TODO: doubt
+    @Builder.Default
     private Boolean enabled = true;
 
     private Instant lastUsedAt;
     private Instant rotatedAt;
     private Instant gracePeriodExpiresAt;
 
-    private String createdBy;
-    private String updatedBy;
-    private Instant createdAt;
-    private Instant updatedAt;
+    @Builder.Default
+    private String createdBy = Constants.SYSTEM;
+    @Builder.Default
+    private Instant createdAt = Instant.now();
+
+    @Builder.Default
+    private String updatedBy = Constants.SYSTEM;
+    @Builder.Default
+    private Instant updatedAt = Instant.now();
 }

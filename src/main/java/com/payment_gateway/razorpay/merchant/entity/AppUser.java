@@ -2,15 +2,18 @@ package com.payment_gateway.razorpay.merchant.entity;
 
 import com.payment_gateway.razorpay.common.enums.UserRole;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "app_user")
-@Getter@Setter
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class AppUser {
 
     @Id
@@ -31,7 +34,9 @@ public class AppUser {
     @Column(nullable = false)
     private UserRole role;
 
-    private Instant createdAt;
-    private Instant updatedAt;
+    @Builder.Default
+    private Instant createdAt = Instant.now();
+    @Builder.Default
+    private Instant updatedAt = Instant.now();
 
 }

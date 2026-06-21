@@ -1,11 +1,10 @@
 package com.payment_gateway.razorpay.merchant.entity;
 
+import com.payment_gateway.razorpay.common.constants.Constants;
 import com.payment_gateway.razorpay.common.enums.BusinessType;
 import com.payment_gateway.razorpay.common.enums.MerchantStatus;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -16,6 +15,9 @@ import java.util.UUID;
 )
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Merchant {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -43,6 +45,8 @@ public class Merchant {
     private String websiteUrl;
 
     @Column(length = 50, nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
     private MerchantStatus status = MerchantStatus.PENDING_KYC;
 
     @Column(length = 20)
@@ -57,9 +61,13 @@ public class Merchant {
     @Column(length = 20)
     private String settlementBankIfsc;
 
-    private String createdBy;
-    private String updatedBy;
-    private Instant createdAt;
-    private Instant updatedAt;
+    @Builder.Default
+    private String createdBy = Constants.SYSTEM;
+    @Builder.Default
+    private String updatedBy = Constants.SYSTEM;
 
+    @Builder.Default
+    private Instant createdAt = Instant.now();
+    @Builder.Default
+    private Instant updatedAt = Instant.now();
 }
