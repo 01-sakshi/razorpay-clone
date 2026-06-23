@@ -7,8 +7,12 @@ spring:
     password: ${DB_PASS:admin}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+payment:
+  order:
+    default-order-expiry-seconds: 60

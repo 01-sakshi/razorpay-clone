@@ -9,8 +9,9 @@ import java.util.List;
 public record ErrorResponse(
         String errorCode,
         String errorDescription,
-        Instant timeStamp,
-        List<FieldError> fieldErrors
+        String identifier,
+        List<FieldError> fieldErrors,
+        Instant timeStamp
 ) {
     public record FieldError(
             String field,
@@ -19,10 +20,14 @@ public record ErrorResponse(
     }
 
     public static ErrorResponse of(String errorCode, String message) {
-        return new ErrorResponse(errorCode, message, Instant.now(), null);
+        return new ErrorResponse(errorCode, message, null, null, Instant.now());
     }
 
     public static ErrorResponse of(String errorCode, String message, List<FieldError> fieldErrors) {
-        return new ErrorResponse(errorCode, message, Instant.now(), fieldErrors);
+        return new ErrorResponse(errorCode, message,null, fieldErrors, Instant.now());
+    }
+
+    public static ErrorResponse of(String errorCode, String message, String identifier, List<FieldError> fieldErrors) {
+        return new ErrorResponse(errorCode, message, identifier, fieldErrors, Instant.now());
     }
 }

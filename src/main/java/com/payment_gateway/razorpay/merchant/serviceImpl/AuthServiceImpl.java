@@ -7,6 +7,7 @@ import com.payment_gateway.razorpay.merchant.dto.request.MerchantSignupRequest;
 import com.payment_gateway.razorpay.merchant.dto.response.MerchantResponse;
 import com.payment_gateway.razorpay.merchant.entity.AppUser;
 import com.payment_gateway.razorpay.merchant.entity.Merchant;
+import com.payment_gateway.razorpay.merchant.mapper.MerchantMapper;
 import com.payment_gateway.razorpay.merchant.repository.AppUserRepository;
 import com.payment_gateway.razorpay.merchant.repository.MerchantRepository;
 import com.payment_gateway.razorpay.merchant.service.AuthService;
@@ -22,6 +23,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final MerchantRepository merchantRepository;
     private final AppUserRepository appUserRepository;
+    private final MerchantMapper merchantMapper;
 
     @Override
     @Transactional
@@ -32,14 +34,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         //prepare to persist merchant in database
-        Merchant merchant = Merchant
-                .builder()
-                .name(merchantSignupRequest.name())
-                .email(merchantSignupRequest.email())
-                .businessName(merchantSignupRequest.businessName())
-                .businessType(merchantSignupRequest.businessType())
-                .build();
-
+        Merchant merchant = merchantMapper.toEntityFromSignUpRequest(merchantSignupRequest);
         merchant = merchantRepository.save(merchant);
 
         AppUser appUser = AppUser
@@ -51,11 +46,6 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         appUserRepository.save(appUser);
-        return new MerchantResponse(merchant.getId(),
-                merchant.getName(),
-                merchant.getEmail(),
-                merchant.getBusinessName(),
-                merchant.getBusinessType(),
-                merchant.getStatus());
+        return merchantMapper.toResponse(merchant);
     }
 }
