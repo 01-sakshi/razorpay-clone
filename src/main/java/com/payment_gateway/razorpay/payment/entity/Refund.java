@@ -14,12 +14,14 @@ import java.util.UUID;
 
 @Entity
 @Table(
-        name = "refund"
+        name = "refund",
+        indexes = {
+                @Index(name = "idx_refund_status", columnList = "status"),
+        }
 )
 @Getter
 @Setter
 public class Refund {
-//Why are we storing refund details in payment gateway?
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

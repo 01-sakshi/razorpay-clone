@@ -11,7 +11,10 @@ import java.util.UUID;
 
 @Entity
 @Table(
-        name = "payment_transition_log"
+        name = "payment_transition_log",
+        indexes = {
+                @Index(name = "idx_payment_transition_payment_id", columnList = "payment_id")
+        }
 )
 @Getter
 @Setter
@@ -37,8 +40,9 @@ public class PaymentTransitionLog {
     @Column(nullable = false, length = 20)
     private PaymentEvent event;
 
+    /*could be system(razorpay itself) or admin(merchant) does it from admin dashboard*/
     @Column(length = 50, nullable = false)
-    private String actor;   //could be system(razorpay itself) or admin(merchant) does it from admin dashboard
+    private String actor;
 
     private Instant createdAt;  //occuredAt
 }
