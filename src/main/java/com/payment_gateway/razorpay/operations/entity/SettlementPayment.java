@@ -1,5 +1,6 @@
 package com.payment_gateway.razorpay.operations.entity;
 
+import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import lombok.Setter;
 )
 @Getter
 @Setter
-public class SettlementPayment {
+public class SettlementPayment extends BaseAuditEntity {
 
     @EmbeddedId
     private SettlementPaymentId settlementPaymentId;

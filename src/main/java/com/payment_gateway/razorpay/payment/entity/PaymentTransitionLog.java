@@ -1,5 +1,6 @@
 package com.payment_gateway.razorpay.payment.entity;
 
+import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import com.payment_gateway.razorpay.common.enums.PaymentEvent;
 import com.payment_gateway.razorpay.common.enums.PaymentStatus;
 import jakarta.persistence.*;
@@ -18,7 +19,7 @@ import java.util.UUID;
 )
 @Getter
 @Setter
-public class PaymentTransitionLog {
+public class PaymentTransitionLog extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -44,5 +45,5 @@ public class PaymentTransitionLog {
     @Column(length = 50, nullable = false)
     private String actor;
 
-    private Instant createdAt;  //occuredAt
+    private Instant occurredAt;
 }

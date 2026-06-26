@@ -1,6 +1,6 @@
 package com.payment_gateway.razorpay.payment.entity;
 
-import com.payment_gateway.razorpay.common.constants.Constants;
+import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import com.payment_gateway.razorpay.common.entity.Money;
 import com.payment_gateway.razorpay.common.enums.OrderStatus;
 import jakarta.persistence.*;
@@ -24,7 +24,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderRecord {
+public class OrderRecord extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -56,14 +56,4 @@ public class OrderRecord {
     private int attempts = 0;
 
     private Instant expiresAt;
-
-    @Builder.Default
-    private String createdBy = Constants.SYSTEM;
-    @Builder.Default
-    private String updatedBy = Constants.SYSTEM;
-    @Builder.Default
-    private Instant createdAt = Instant.now();
-    @Builder.Default
-    private Instant updatedAt = Instant.now();
-
 }

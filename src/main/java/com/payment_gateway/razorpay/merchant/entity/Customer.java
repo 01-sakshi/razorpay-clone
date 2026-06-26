@@ -1,10 +1,10 @@
 package com.payment_gateway.razorpay.merchant.entity;
 
+import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -14,7 +14,7 @@ import java.util.UUID;
         })
 @Getter
 @Setter
-public class Customer {
+public class Customer extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,7 +34,4 @@ public class Customer {
 
     @Column(length = 20)
     private String gstId;
-
-    private Instant createdAt;
-    private Instant updatedAt;
 }

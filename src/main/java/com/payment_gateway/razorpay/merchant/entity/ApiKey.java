@@ -1,6 +1,6 @@
 package com.payment_gateway.razorpay.merchant.entity;
 
-import com.payment_gateway.razorpay.common.constants.Constants;
+import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import com.payment_gateway.razorpay.common.enums.Environment;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ApiKey {
+public class ApiKey extends BaseAuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -47,14 +47,4 @@ public class ApiKey {
     private Instant lastUsedAt;
     private Instant rotatedAt;
     private Instant gracePeriodExpiresAt;
-
-    @Builder.Default
-    private String createdBy = Constants.SYSTEM;
-    @Builder.Default
-    private Instant createdAt = Instant.now();
-
-    @Builder.Default
-    private String updatedBy = Constants.SYSTEM;
-    @Builder.Default
-    private Instant updatedAt = Instant.now();
 }

@@ -1,5 +1,6 @@
 package com.payment_gateway.razorpay.payment.entity;
 
+import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import com.payment_gateway.razorpay.common.entity.Money;
 import com.payment_gateway.razorpay.common.enums.PaymentMethod;
 import com.payment_gateway.razorpay.common.enums.PaymentStatus;
@@ -23,7 +24,7 @@ import java.util.UUID;
         })
 @Getter
 @Setter
-public class Payment {
+public class Payment extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -65,9 +66,4 @@ public class Payment {
     private Instant failedAt;
     private Instant refundedAt;
     private Instant settledAt;
-
-    private Instant createdAt;
-    private String updatedBy;
-    private Instant updatedAt;
-    private String createdBy;
 }

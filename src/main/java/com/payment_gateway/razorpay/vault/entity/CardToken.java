@@ -1,6 +1,6 @@
 package com.payment_gateway.razorpay.vault.entity;
 
-import com.payment_gateway.razorpay.payment.entity.OrderRecord;
+import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +14,7 @@ import java.util.UUID;
 )
 @Getter
 @Setter
-public class CardToken {
+public class CardToken extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

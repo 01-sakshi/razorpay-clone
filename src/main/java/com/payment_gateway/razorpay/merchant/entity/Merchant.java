@@ -1,12 +1,11 @@
 package com.payment_gateway.razorpay.merchant.entity;
 
-import com.payment_gateway.razorpay.common.constants.Constants;
+import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import com.payment_gateway.razorpay.common.enums.BusinessType;
 import com.payment_gateway.razorpay.common.enums.MerchantStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -20,7 +19,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Merchant {
+public class Merchant extends BaseAuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -62,14 +61,4 @@ public class Merchant {
 
     @Column(length = 20)
     private String settlementBankIfsc;
-
-    @Builder.Default
-    private String createdBy = Constants.SYSTEM;
-    @Builder.Default
-    private String updatedBy = Constants.SYSTEM;
-
-    @Builder.Default
-    private Instant createdAt = Instant.now();
-    @Builder.Default
-    private Instant updatedAt = Instant.now();
 }

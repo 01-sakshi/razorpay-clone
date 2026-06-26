@@ -1,5 +1,6 @@
 package com.payment_gateway.razorpay.payment.entity;
 
+import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import com.payment_gateway.razorpay.common.entity.Money;
 import com.payment_gateway.razorpay.common.enums.RefundStatus;
 import jakarta.persistence.*;
@@ -21,7 +22,7 @@ import java.util.UUID;
 )
 @Getter
 @Setter
-public class Refund {
+public class Refund extends BaseAuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -52,6 +53,4 @@ public class Refund {
     private Map<String, Object> notes;  //refund comments/reason
 
     private Instant processedAt;    //when was refund processed
-    private Instant createdAt;
-    private String createdBy;
 }

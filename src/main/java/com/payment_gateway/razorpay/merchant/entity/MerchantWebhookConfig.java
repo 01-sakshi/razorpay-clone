@@ -1,5 +1,6 @@
 package com.payment_gateway.razorpay.merchant.entity;
 
+import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import java.util.UUID;
         })
 @Getter
 @Setter
-public class MerchantWebhookConfig {
+public class MerchantWebhookConfig extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

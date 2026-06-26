@@ -1,5 +1,6 @@
 package com.payment_gateway.razorpay.operations.entity;
 
+import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import com.payment_gateway.razorpay.common.entity.Money;
 import com.payment_gateway.razorpay.common.enums.SettlementStatus;
 import jakarta.persistence.*;
@@ -15,7 +16,7 @@ import java.util.UUID;
 )
 @Getter
 @Setter
-public class Settlement {
+public class Settlement extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -60,5 +61,4 @@ public class Settlement {
     private String bankReference;
 
     private Instant settledAt;  //processedAt
-    private Instant createdAt;
 }

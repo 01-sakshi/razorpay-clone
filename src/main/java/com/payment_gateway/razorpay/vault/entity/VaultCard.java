@@ -1,6 +1,6 @@
 package com.payment_gateway.razorpay.vault.entity;
 
-import com.payment_gateway.razorpay.payment.entity.OrderRecord;
+import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +14,7 @@ import java.util.UUID;
 )
 @Getter
 @Setter
-public class VaultCard {
+public class VaultCard extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -45,9 +45,4 @@ public class VaultCard {
     private String cardHolderName;
 
     private Instant deletedAt;
-
-    private Instant createdAt;
-    private String updatedBy;
-    private Instant updatedAt;
-    private String createdBy;
 }

@@ -1,5 +1,6 @@
 package com.payment_gateway.razorpay.operations.entity;
 
+import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import com.payment_gateway.razorpay.common.enums.WebhookEventStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import java.util.UUID;
 )
 @Getter
 @Setter
-public class WebhookEvent {
+public class WebhookEvent extends BaseAuditEntity {
 
     @Id
     private UUID id;
@@ -52,6 +53,4 @@ public class WebhookEvent {
     private String lastResponseBody;
 
     private Instant deliveredAt;
-    private Instant createdAt;
-
 }
