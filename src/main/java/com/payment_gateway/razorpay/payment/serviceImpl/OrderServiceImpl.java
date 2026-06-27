@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findByIdAndMerchant(orderId, merchantId)
                 .map(orderRecord -> {
                     if (orderRecord.getStatus().equals(OrderStatus.CANCELLED) || orderRecord.getStatus().equals(OrderStatus.PAID))
-                        throw new BusinessRuleViolationException("ORDER_CANNOT_CANCEL", "Order", orderId.toString());
+                        throw new BusinessRuleViolationException("ORDER_CANNOT_CANCEL", "Order", orderId);
                     orderRecord.setStatus(OrderStatus.CANCELLED);
                     orderRecord.setUpdatedAt(Instant.now());
                     orderRepository.save(orderRecord);

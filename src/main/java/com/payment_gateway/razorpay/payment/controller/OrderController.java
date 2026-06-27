@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/order")
+@RequestMapping("/v1/order")    //TODO: Make it orders
 @RequiredArgsConstructor
 public class OrderController {
 

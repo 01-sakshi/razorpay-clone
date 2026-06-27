@@ -5,8 +5,7 @@ import com.payment_gateway.razorpay.common.entity.Money;
 import com.payment_gateway.razorpay.common.enums.PaymentMethod;
 import com.payment_gateway.razorpay.common.enums.PaymentStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -24,6 +23,9 @@ import java.util.UUID;
         })
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Payment extends BaseAuditEntity {
 
     @Id
@@ -56,6 +58,10 @@ public class Payment extends BaseAuditEntity {
 
     @Column(length = 100)
     private String bankReference;   //UTR details
+
+    @Column(length = 100)
+    private String processorReference;
+
     @Column(length = 20)
     private String errorCode;
     @Column(length = 255)
