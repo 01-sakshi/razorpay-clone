@@ -16,13 +16,16 @@ import com.payment_gateway.razorpay.payment.repository.OrderRepository;
 import com.payment_gateway.razorpay.payment.repository.PaymentRepository;
 import com.payment_gateway.razorpay.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentServiceImpl implements PaymentService {
 
     private final OrderRepository orderRepository;
@@ -47,7 +50,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         orderRecord.setStatus(OrderStatus.ATTEMPTED);
-        orderRecord.setAttempts(orderRecord.getAttempts() + 1);
+        orderRecord.setAttempts(orderRecord.getAttempts() + 1); //payment attempt on this order
 
         Payment payment = Payment
                 .builder()
@@ -69,20 +72,46 @@ public class PaymentServiceImpl implements PaymentService {
                 payment.getAmount()));
 
         switch (paymentResult) {
-            case PaymentResult.Pending pending->    //record pattern
+            case PaymentResult.Pending pending ->    //record pattern
                     payment.setProcessorReference(pending.registrationRef());
             case PaymentResult.Failure failure -> {
-                System.out.println("failure:" + failure);
+                IO.println("failure:" + failure);
                 payment.setStatus(PaymentStatus.FAILED);
                 payment.setErrorCode(failure.errorCode());
                 payment.setErrorDescription(failure.errorDescription());
             }
-            case null, default -> {
+            case PaymentResult.Success success -> {
+                payment.setProcessorReference(success.bankReference());
             }
         }
 
         payment = paymentRepository.save(payment);
         orderRecord = orderRepository.save(orderRecord);
+        return paymentMapper.toResponse(payment);
+    }
+
+    @Override
+    public PaymentResponse capture(UUID merchantId, UUID paymentId) {
+        Payment payment = paymentRepository.findByIdAndMerchantId(paymentId, merchantId)
+                .orElseThrow(() -> new ResourceNotFoundException("PAYMENT", paymentId));
+
+        payment.setStatus(PaymentStatus.CAPTURING);
+
+        //pass request to PaymentGatewayRouter to get the payment captured.
+        PaymentResult paymentResult = paymentGatewayRouter.capture(payment.getMethod(), paymentId);
+
+        if (paymentResult instanceof PaymentResult.Failure failure) {
+            payment.setStatus(PaymentStatus.AUTHORIZED);
+            payment.setErrorCode(failure.errorCode());
+            payment.setErrorDescription(failure.errorDescription());
+            log.error("Payment captured failed, paymentId: {}", paymentId);
+        } else if (paymentResult instanceof PaymentResult.Success success) {
+            payment.setStatus(PaymentStatus.CAPTURED);
+            payment.setCapturedAt(Instant.now());
+            log.info("Payment captured, paymentId: {}", paymentId);
+        }
+
+        payment = paymentRepository.save(payment);
         return paymentMapper.toResponse(payment);
     }
 
