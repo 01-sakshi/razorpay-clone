@@ -37,4 +37,11 @@ public class GlobalExceptionHandler {
                 ErrorResponse.of(e.getErrorCode(), e.getMessage(), (String) e.getIdentifier(), null)
         );
     }
+
+    @ExceptionHandler(InvalidStateTransitionException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidStateTransitionException(InvalidStateTransitionException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                ErrorResponse.of("", e.getMessage())
+        );
+    }
 }
