@@ -66,6 +66,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
         payment = paymentRepository.save(payment);
 
+        paymentTransitionService.apply(payment, PaymentEvent.AUTHORIZE_ATTEMPT);
         PaymentResult paymentResult = paymentGatewayRouter.initiate(new PaymentRequest(
                 payment.getId(),
                 merchantId,
@@ -124,4 +125,44 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentMapper.toResponse(payment);
     }
 
+    @Override
+    @Transactional
+    public void resolveAuthorization(UUID paymentId, boolean approve, String bankRef, String errorCode, String errorDescription) {
+        Payment payment = paymentRepository.findById(paymentId).orElseThrow(() ->
+                new ResourceNotFoundException("PAYMENT", paymentId));
+        if (!payment.getStatus().equals(PaymentStatus.AUTHORIZING)) {
+            log.warn("Payment is not in authorizing state, paymentId: {}, status: {}", paymentId, payment.getStatus());
+        }
+        OrderRecord orderRecord = payment.getOrderRecord();
+
+        /* At this point, payment is in Authorizing state */
+        if (approve) {
+            paymentTransitionService.apply(payment, PaymentEvent.AUTHORIZE_SUCCESS);
+            payment.setBankReference(payment.getBankReference());
+            payment.setAuthorizedAt(Instant.now());
+
+            //Auto-capture payment
+            paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_REQUEST);
+            //Send request to payment gateway router to get the payment captured
+            PaymentResult capture = paymentGatewayRouter.capture(payment.getMethod(), paymentId);
+
+            if (capture instanceof PaymentResult.Success success) {
+                paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_SUCCESS);
+                payment.setCapturedAt(Instant.now());
+                orderRecord.setStatus(OrderStatus.PAID);
+            } else if (capture instanceof PaymentResult.Failure failure) {
+                paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_FAIL);
+                payment.setErrorCode(failure.errorCode());
+                payment.setErrorDescription(failure.errorDescription());
+            }
+        } else {
+            paymentTransitionService.apply(payment, PaymentEvent.AUTHORIZE_FAIL);
+        }
+
+         /* Dirty-Checking may work here leading to orderRecord getting updated as part of
+            paymentRepository.save(payment) itself, leading to orderRepository.save(orderRecord)
+            not getting executed at all */
+        payment = paymentRepository.save(payment);
+        orderRecord = orderRepository.save(orderRecord);
+    }
 }
