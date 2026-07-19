@@ -1,9 +1,9 @@
 package com.payment_gateway.razorpay.vault.entity;
 
 import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
+import com.payment_gateway.razorpay.common.enums.CardBrand;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -14,6 +14,9 @@ import java.util.UUID;
 )
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class VaultCard extends BaseAuditEntity {
 
     @Id
@@ -32,8 +35,9 @@ public class VaultCard extends BaseAuditEntity {
     @Column(nullable = false, length = 4)
     private String lastFour;
 
-    @Column(nullable = false)
-    private String brand;
+    @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private CardBrand brand;
 
     @Column(nullable = false, length = 2)
     private String expiryMonth;

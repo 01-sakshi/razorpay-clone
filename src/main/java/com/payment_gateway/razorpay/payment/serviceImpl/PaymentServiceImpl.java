@@ -85,7 +85,9 @@ public class PaymentServiceImpl implements PaymentService {
                 payment.setErrorDescription(failure.errorDescription());
             }
             case PaymentResult.Success success -> {
-                payment.setProcessorReference(success.bankReference());
+//                payment.setProcessorReference(success.bankReference());
+                log.warn("Invalid state");
+                return null;
             }
         }
 

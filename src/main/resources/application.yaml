@@ -16,3 +16,7 @@ spring:
 payment:
   order:
     default-order-expiry-seconds: 60
+
+vault:
+  service:
+    master-key: av7l3pp190ahh50a
