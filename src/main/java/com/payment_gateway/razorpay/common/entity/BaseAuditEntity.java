@@ -1,5 +1,6 @@
 package com.payment_gateway.razorpay.common.entity;
 
+import com.payment_gateway.razorpay.common.constants.Constants;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -15,8 +16,8 @@ import java.time.Instant;
 @Setter
 @EntityListeners(AuditingEntityListener.class)
 public class BaseAuditEntity {
-    private String createdBy;
-    private String updatedBy;
+    private String createdBy = Constants.SYSTEM;
+    private String updatedBy = Constants.SYSTEM;
 
     @CreatedDate
     private Instant createdAt;

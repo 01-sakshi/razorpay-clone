@@ -1,6 +1,8 @@
 package com.payment_gateway.razorpay.merchant.controller;
 
+import com.payment_gateway.razorpay.merchant.dto.request.LoginRequest;
 import com.payment_gateway.razorpay.merchant.dto.request.MerchantSignupRequest;
+import com.payment_gateway.razorpay.merchant.dto.response.LoginResponse;
 import com.payment_gateway.razorpay.merchant.dto.response.MerchantResponse;
 import com.payment_gateway.razorpay.merchant.service.AuthService;
 import jakarta.validation.Valid;
@@ -18,15 +20,17 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @GetMapping
-    public String health() {
-        return "Healthy";
-    }
-
     @PostMapping("/signup")
     public ResponseEntity<MerchantResponse> signup(@RequestBody @Valid MerchantSignupRequest merchantSignupRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 authService.signUp(merchantSignupRequest)
+        );
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                authService.login(loginRequest)
         );
     }
 }

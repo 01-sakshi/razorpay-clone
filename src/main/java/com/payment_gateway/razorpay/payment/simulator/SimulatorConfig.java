@@ -20,6 +20,7 @@ public class SimulatorConfig {
     private ChaosMode chaosMode = ChaosMode.NORMAL;
     private Map<String, MethodSimulatorConfig> methods = new HashMap<>();
 
+
     //Hashmap(methods) is populated via application properties file
     MethodSimulatorConfig configOf(PaymentMethod paymentMethod) {
         return methods.getOrDefault(paymentMethod.name(), new MethodSimulatorConfig());

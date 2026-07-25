@@ -2,8 +2,11 @@ package com.payment_gateway.razorpay.common.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -42,6 +45,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidStateTransitionException(InvalidStateTransitionException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 ErrorResponse.of("", e.getMessage())
+        );
+    }
+
+    /* Exceptions thrown by @Valid will be handled here */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        List<ErrorResponse.FieldError> fieldErrors = e.getBindingResult().getFieldErrors().stream()
+                .map(fe -> new ErrorResponse.FieldError(fe.getField(), fe.getDefaultMessage())).toList();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                ErrorResponse.of("VALIDATION_FAILED", "Request validation failed", fieldErrors)
         );
     }
 }

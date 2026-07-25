@@ -19,7 +19,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    UUID merchantId = UUID.fromString("329e7a3d-6649-45b8-9cd8-cd0e0e94612e");   //TODO: dummy merchantId, later will be handled as part of spring security
+    UUID merchantId = UUID.fromString("af747575-be93-4a7e-8f95-7119c06ce992");   //TODO: dummy merchantId, later will be handled as part of spring security
 
     @PostMapping
     public ResponseEntity<OrderResponse> create(@RequestBody CreateOrderRequest createOrderRequest) {

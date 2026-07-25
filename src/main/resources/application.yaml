@@ -38,3 +38,6 @@ vault:
     master-key: av7l3pp190ahh50a
 #Doubt: What can be the max/min length of this master-key ?
 
+jwt:
+  secret: ab81uapox02nxvgxuw6382hdxjw02836edgbcxjk2qw
+
