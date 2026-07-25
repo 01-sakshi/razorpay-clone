@@ -20,6 +20,7 @@ public class WebSecurityConfig {
     private static final String[] JWT_ROUTES = {"/v1/actuator/**", "/v1/merchants/**", "/v1/admin/**"};  // /v1/auth/** routes??
     private static final String[] API_KEY_ROUTES = {"/v1/orders/**", "/v1/payments/**", "/v1/vault/**"};
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain jwtChain(HttpSecurity httpSecurity) {
@@ -33,6 +34,20 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin.disable())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) //Add jwtAuthenticationFilter before UsernamePasswordAuthenticationFilter in the security chain list
+                .build();
+    }
+
+    @Bean
+    public SecurityFilterChain apiKeyChain(HttpSecurity httpSecurity) {
+        return httpSecurity
+                .securityMatcher(API_KEY_ROUTES)      /* Only the routes that are allowed as per API_KEY_ROUTES will be permitted here and the following code will apply to them only */
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().authenticated())
+                .formLogin(formLogin -> formLogin.disable())
+                .addFilterBefore(apiKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) //Add apiKeyAuthenticationFilter before UsernamePasswordAuthenticationFilter in the security chain list
                 .build();
     }
 
