@@ -1,5 +1,6 @@
 package com.payment_gateway.razorpay.payment.controller;
 
+import com.payment_gateway.razorpay.merchant.security.MerchantContext;
 import com.payment_gateway.razorpay.payment.dto.request.CreateOrderRequest;
 import com.payment_gateway.razorpay.payment.dto.response.OrderResponse;
 import com.payment_gateway.razorpay.payment.dto.response.PaymentResponse;
@@ -18,30 +19,29 @@ import java.util.UUID;
 public class OrderController {
 
     private final OrderService orderService;
-
-    UUID merchantId = UUID.fromString("af747575-be93-4a7e-8f95-7119c06ce992");   //TODO: dummy merchantId, later will be handled as part of spring security
+    private final MerchantContext merchantContext;
 
     @PostMapping
     public ResponseEntity<OrderResponse> create(@RequestBody CreateOrderRequest createOrderRequest) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(orderService.create(merchantId, createOrderRequest));
+                .body(orderService.create(merchantContext.getMerchantId(), createOrderRequest));
     }
 
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderResponse> get(@PathVariable UUID orderId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(orderService.get(merchantId, orderId));
+                .body(orderService.get(merchantContext.getMerchantId(), orderId));
     }
 
     @PostMapping("/cancel/{orderId}")
     public ResponseEntity<String> cancel(@PathVariable UUID orderId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(orderService.cancel(merchantId, orderId));
+                .body(orderService.cancel(merchantContext.getMerchantId(), orderId));
     }
 
     @GetMapping("/{orderId}/payments")
     public ResponseEntity<List<PaymentResponse>> list(@PathVariable UUID orderId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(orderService.list(merchantId, orderId));
+                .body(orderService.list(merchantContext.getMerchantId(), orderId));
     }
 }

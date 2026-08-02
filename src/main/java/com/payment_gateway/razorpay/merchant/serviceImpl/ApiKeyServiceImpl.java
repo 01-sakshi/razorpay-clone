@@ -14,6 +14,7 @@ import com.payment_gateway.razorpay.merchant.repository.ApiKeyRepository;
 import com.payment_gateway.razorpay.merchant.repository.MerchantRepository;
 import com.payment_gateway.razorpay.merchant.service.ApiKeyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     private final ApiKeyRepository apiKeyRepository;
     private final MerchantRepository merchantRepository;
     private final ApiKeyMapper apiKeyMapper;
+    private BCryptPasswordEncoder BCRYPT = new BCryptPasswordEncoder();
 
     @Override
     @Transactional
@@ -43,7 +45,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         ApiKey apiKey = ApiKey.builder()
                 .merchant(merchant)
                 .keyId(keyId)
-                .keySecretHash(keySecret)   //TODO: Hash the key secret to persist
+                .keySecretHash(BCRYPT.encode(keySecret))
                 .environment(createApiKeyRequest.environment())
                 .build();
         return apiKeyMapper.toApiKeyCreateResponse(apiKeyRepository.save(apiKey));
@@ -79,7 +81,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         if(!apiKey.getEnabled()) throw new ApiKeyDisabledException("API_KEY_DISABLED", "APIKEY", keyId, "Cannot rotate a disabled API Key");
         apiKey.setPreviousKeySecretHash(apiKey.getKeySecretHash());
         apiKey.setGracePeriodExpiresAt(Instant.now().plusSeconds(60*60));
-        apiKey.setKeySecretHash(RandomizerUtil.randomBase64(40));
+        apiKey.setKeySecretHash(BCRYPT.encode(RandomizerUtil.randomBase64(40)));
         apiKey.setUpdatedAt(Instant.now());
         apiKey.setUpdatedBy(Constants.SYSTEM);
         apiKey = apiKeyRepository.save(apiKey);

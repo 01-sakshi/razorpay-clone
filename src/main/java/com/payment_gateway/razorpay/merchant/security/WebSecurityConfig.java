@@ -3,6 +3,8 @@ package com.payment_gateway.razorpay.merchant.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -23,6 +25,7 @@ public class WebSecurityConfig {
     private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
 
     @Bean
+    @Order(1)
     public SecurityFilterChain jwtChain(HttpSecurity httpSecurity) {
         return httpSecurity
                 .securityMatcher(JWT_ROUTES)      /* Only the routes that are allowed as per JWT_ROUTES will be permitted here and the following code will apply to them only */
@@ -38,6 +41,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    @Order(2)
     public SecurityFilterChain apiKeyChain(HttpSecurity httpSecurity) {
         return httpSecurity
                 .securityMatcher(API_KEY_ROUTES)      /* Only the routes that are allowed as per API_KEY_ROUTES will be permitted here and the following code will apply to them only */
