@@ -21,7 +21,7 @@ import java.util.UUID;
 public class VaultController {
 
     private final VaultService vaultService;
-    private MerchantContext merchantContext;
+    private final MerchantContext merchantContext;
 
     @PostMapping("/tokenize")
     public ResponseEntity<TokenizeResponse> tokenize(@RequestBody @Valid TokenizeRequest tokenizeRequest) {

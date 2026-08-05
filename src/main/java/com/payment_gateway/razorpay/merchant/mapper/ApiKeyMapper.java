@@ -12,7 +12,6 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ApiKeyMapper {
 
-    @Mapping(target = "keySecret", source = "keySecretHash")
     ApiKeyCreateResponse toApiKeyCreateResponse(ApiKey apiKey);
 
     List<ApiKeyResponse> toApikeyResponseList(List<ApiKey> apiKey);

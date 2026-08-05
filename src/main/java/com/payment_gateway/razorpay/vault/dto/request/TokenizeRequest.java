@@ -7,26 +7,26 @@ import org.hibernate.validator.constraints.LuhnCheck;
 import java.util.UUID;
 
 public record TokenizeRequest(
-        @NotBlank
+        @NotNull
         UUID customerId,
 
         @NotBlank(message = "PAN is required")
         @LuhnCheck(message = "Invalid PAN")     //TODO: Study Luhn Algorithm
-        @Pattern(regexp = "^(0-9){13,19}$", message = "PAN length is invalid")
+        @Pattern(regexp = "^[0-9]{13,19}$", message = "PAN length is invalid")
         String pan,
 
-        @NotBlank(message = "Expiry month is required")
+        @NotNull(message = "Expiry month is required")
         @Min(value = 1, message = "Expiry month must be between 1 and 12")
         @Max(value = 12, message = "Expiry month must be between 1 and 12")
         Integer expiryMonth,
 
-        @NotBlank(message = "Expiry year is required")
+        @NotNull(message = "Expiry year is required")
         @ExpiryYear
         Integer expiryYear,
 
         @NotBlank
-        @Pattern(regexp = "^(0-9){3,4}$", message = "CVV is invalid")
-        Integer cvv,             //Doubt: Why are we sharing cvv with vault service?
+        @Pattern(regexp = "^[0-9]{3,4}$", message = "CVV is invalid")
+        String cvv,             //Doubt: Why are we sharing cvv with vault service?
 
         @Size(min = 3, message = "Card Holder Name should be minimum 3 characters")
         String cardHolderName

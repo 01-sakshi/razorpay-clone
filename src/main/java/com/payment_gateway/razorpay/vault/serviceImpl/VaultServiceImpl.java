@@ -41,7 +41,7 @@ public class VaultServiceImpl implements VaultService {
     @Transactional
     public TokenizeResponse tokenize(TokenizeRequest tokenizeRequest, UUID merchantId) {
         String lastFour = tokenizeRequest.pan().substring(tokenizeRequest.pan().length() - 4);
-        String bin = tokenizeRequest.pan().substring(0, 5); //First six digits of PAN
+        String bin = tokenizeRequest.pan().substring(0, 6); //First six digits of PAN
         CardBrand cardBrand = detectBrand(bin);
         byte[] dek = KeyGenerators.secureRandom(32).generateKey();
         byte[] encryptedPan = VaultServiceConfig.panEncrypter(dek)
@@ -67,6 +67,7 @@ public class VaultServiceImpl implements VaultService {
                 .token(token)
                 .merchantId(merchantId)
                 .customerId(tokenizeRequest.customerId())
+                .vaultCard(vaultCard)
                 .build();
 
         vaultCard = vaultCardRepository.save(vaultCard);

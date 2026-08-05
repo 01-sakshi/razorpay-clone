@@ -18,7 +18,7 @@ import java.util.UUID;
 public class PaymentController {
 
     private final PaymentService paymentService;
-    private MerchantContext merchantContext;
+    private final MerchantContext merchantContext;
 
     @PostMapping()
     public ResponseEntity<PaymentResponse> initiate(@Valid @RequestBody PaymentInitRequest paymentInitRequest) {

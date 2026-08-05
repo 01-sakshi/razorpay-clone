@@ -48,7 +48,8 @@ public class ApiKeyServiceImpl implements ApiKeyService {
                 .keySecretHash(BCRYPT.encode(keySecret))
                 .environment(createApiKeyRequest.environment())
                 .build();
-        return apiKeyMapper.toApiKeyCreateResponse(apiKeyRepository.save(apiKey));
+        apiKey = apiKeyRepository.save(apiKey);
+        return new ApiKeyCreateResponse(apiKey.getId(), apiKey.getKeyId(), keySecret, apiKey.getEnvironment());
     }
 
     @Override
@@ -60,10 +61,10 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     @Transactional
     public String revoke(UUID merchantId, String keyId) {
         Optional<ApiKey> optionalApiKey = apiKeyRepository.findApiKeyByKeyIdAndMerchantId(keyId, merchantId);
-        if(optionalApiKey.isEmpty()) throw new ResourceNotFoundException("apiKey", keyId);
+        if (optionalApiKey.isEmpty()) throw new ResourceNotFoundException("apiKey", keyId);
 
         ApiKey apiKey = optionalApiKey.get();
-        if(apiKey.getEnabled()) apiKey.setEnabled(false);
+        if (apiKey.getEnabled()) apiKey.setEnabled(false);
         else return "Api Key already revoked";
         /*Since @Transactional is added, it will automatically detect the change in entity
         and persist it, no need to explicitly call save()*/
@@ -75,12 +76,13 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     @Transactional
     public ApiKeyCreateResponse rotate(UUID merchantId, String keyId) {
         Optional<ApiKey> optionalApiKey = apiKeyRepository.findApiKeyByKeyIdAndMerchantId(keyId, merchantId);
-        if(optionalApiKey.isEmpty()) throw new ResourceNotFoundException("apiKey", keyId);
+        if (optionalApiKey.isEmpty()) throw new ResourceNotFoundException("apiKey", keyId);
 
         ApiKey apiKey = optionalApiKey.get();
-        if(!apiKey.getEnabled()) throw new ApiKeyDisabledException("API_KEY_DISABLED", "APIKEY", keyId, "Cannot rotate a disabled API Key");
+        if (!apiKey.getEnabled())
+            throw new ApiKeyDisabledException("API_KEY_DISABLED", "APIKEY", keyId, "Cannot rotate a disabled API Key");
         apiKey.setPreviousKeySecretHash(apiKey.getKeySecretHash());
-        apiKey.setGracePeriodExpiresAt(Instant.now().plusSeconds(60*60));
+        apiKey.setGracePeriodExpiresAt(Instant.now().plusSeconds(60 * 60));
         apiKey.setKeySecretHash(BCRYPT.encode(RandomizerUtil.randomBase64(40)));
         apiKey.setUpdatedAt(Instant.now());
         apiKey.setUpdatedBy(Constants.SYSTEM);

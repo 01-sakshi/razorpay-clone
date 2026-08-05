@@ -35,7 +35,7 @@ payment:
 
 vault:
   service:
-    master-key: av7l3pp190ahh50a
+    master-key: a019mna123gaplmer17834mce9qp10h4
 #Doubt: What can be the max/min length of this master-key ?
 
 jwt:

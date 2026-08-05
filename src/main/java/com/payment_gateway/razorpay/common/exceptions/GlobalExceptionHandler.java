@@ -57,4 +57,11 @@ public class GlobalExceptionHandler {
                 ErrorResponse.of("VALIDATION_FAILED", "Request validation failed", fieldErrors)
         );
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                ErrorResponse.of("", e.getMessage())
+        );
+    }
 }
