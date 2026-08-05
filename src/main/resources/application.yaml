@@ -43,6 +43,12 @@ vault:
     master-key: a019mna123gaplmer17834mce9qp10h4
 #Doubt: What can be the max/min length of this master-key ?
 
+app:
+  rate-limit:
+    method: fixed
+    use-case:
+      api-key:
+        requests-per-minute: 2
 jwt:
   secret: ab81uapox02nxvgxuw6382hdxjw02836edgbcxjk2qw
 
