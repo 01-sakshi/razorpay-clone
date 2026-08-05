@@ -4,6 +4,7 @@ import com.payment_gateway.razorpay.common.constants.Constants;
 import com.payment_gateway.razorpay.common.exceptions.ApiKeyDisabledException;
 import com.payment_gateway.razorpay.common.exceptions.ResourceNotFoundException;
 import com.payment_gateway.razorpay.common.util.RandomizerUtil;
+import com.payment_gateway.razorpay.merchant.cache.ApiKeyCache;
 import com.payment_gateway.razorpay.merchant.dto.request.CreateApiKeyRequest;
 import com.payment_gateway.razorpay.merchant.dto.response.ApiKeyCreateResponse;
 import com.payment_gateway.razorpay.merchant.dto.response.ApiKeyResponse;
@@ -31,6 +32,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     private final MerchantRepository merchantRepository;
     private final ApiKeyMapper apiKeyMapper;
     private BCryptPasswordEncoder BCRYPT = new BCryptPasswordEncoder();
+    private final ApiKeyCache apiKeyCache;
 
     @Override
     @Transactional
@@ -66,8 +68,12 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         ApiKey apiKey = optionalApiKey.get();
         if (apiKey.getEnabled()) apiKey.setEnabled(false);
         else return "Api Key already revoked";
-        /*Since @Transactional is added, it will automatically detect the change in entity
-        and persist it, no need to explicitly call save()*/
+
+        //Remove entry from cache as well
+        apiKeyCache.evict(keyId);
+
+        /* Since @Transactional is added, it will automatically detect the change in entity
+        and persist it, no need to explicitly call save() */
         apiKeyRepository.save(apiKey);
         return "Api Key revoked";
     }
@@ -86,6 +92,8 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         apiKey.setKeySecretHash(BCRYPT.encode(RandomizerUtil.randomBase64(40)));
         apiKey.setUpdatedAt(Instant.now());
         apiKey.setUpdatedBy(Constants.SYSTEM);
+
+        apiKeyCache.evict(keyId);   //Remove entry from cache as well
         apiKey = apiKeyRepository.save(apiKey);
         return apiKeyMapper.toApiKeyCreateResponse(apiKey);
     }

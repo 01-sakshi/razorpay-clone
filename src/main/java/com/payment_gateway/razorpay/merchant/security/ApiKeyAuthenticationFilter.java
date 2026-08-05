@@ -1,5 +1,7 @@
 package com.payment_gateway.razorpay.merchant.security;
 
+import com.payment_gateway.razorpay.merchant.cache.ApiKeyCache;
+import com.payment_gateway.razorpay.merchant.cache.ApiKeyCacheEntry;
 import com.payment_gateway.razorpay.merchant.entity.ApiKey;
 import com.payment_gateway.razorpay.merchant.repository.ApiKeyRepository;
 import jakarta.servlet.FilterChain;
@@ -13,14 +15,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
 
@@ -34,6 +34,7 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     private final BCryptPasswordEncoder BCRYPT = new BCryptPasswordEncoder();   //To avoid circular dependency with WebSecurityConfig respect to password encoder
     private final MerchantContext merchantContext;
     private final HandlerExceptionResolver handlerExceptionResolver;
+    private final ApiKeyCache apiKeyCache;  //Since ApiKeyCache has single implementation i.e RedisApiKeyCache so we can directly inject the interface here
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -54,17 +55,28 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
             String secretKey = decoded[1];
             String keyId = decoded[0];
 
-            ApiKey apiKey = apiKeyRepository.findByKeyId(keyId).orElseThrow(
-                    () -> new BadRequestException("Invalid or missing API Key"));
+//            ApiKey apiKey = apiKeyRepository.findByKeyId(keyId).orElseThrow(
+//                    () -> new BadRequestException("Invalid or missing API Key"));
 
-            if (!apiKey.getEnabled() || !secretMatches(secretKey, apiKey))
+            /* First try to fetch apiKey entry from redis cache, if not found get it from database and insert in cache */
+            ApiKeyCacheEntry apiKeyEntry = apiKeyCache.get(keyId).orElse(null);
+            if (apiKeyEntry == null) {
+                ApiKey apiKey = apiKeyRepository.findByKeyId(keyId).orElseThrow(
+                        () -> new BadRequestException("Invalid or missing API Key"));
+                apiKeyEntry = new ApiKeyCacheEntry(apiKey.getMerchant().getId(),
+                        keyId, apiKey.getKeySecretHash(), apiKey.getPreviousKeySecretHash(), apiKey.getEnvironment(),
+                        apiKey.getEnabled(), apiKey.getGracePeriodExpiresAt());
+                apiKeyCache.put(keyId, apiKeyEntry);
+            }
+
+            if (!apiKeyEntry.enabled() || !secretMatches(secretKey, apiKeyEntry))
                 throw new BadRequestException("Invalid or missing API Key");
 
             var auth = new UsernamePasswordAuthenticationToken(keyId, null,
                     List.of(new SimpleGrantedAuthority("AUTH_KEY_ROLE")));
 
             SecurityContextHolder.getContext().setAuthentication(auth);
-            merchantContext.setMerchantId(apiKey.getMerchant().getId());
+            merchantContext.setMerchantId(apiKeyEntry.merchantId());
             merchantContext.setKeyId(keyId);
 
             /* Pass the request to the next security filter */
@@ -76,14 +88,13 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private boolean secretMatches(String rawSecret, ApiKey apiKey) {
-        if (BCRYPT.matches(rawSecret, apiKey.getKeySecretHash()))
+    private boolean secretMatches(String rawSecret, ApiKeyCacheEntry apiKeyEntry) {
+        if (BCRYPT.matches(rawSecret, apiKeyEntry.keySecretHash()))
             return true;   /* Verify the encoded password obtained from storage matches the submitted raw
          password after it too is encoded. */
-        return apiKey.getGracePeriodExpiresAt() != null &&
-                Instant.now().isBefore(apiKey.getGracePeriodExpiresAt()) &&
-                apiKey.getPreviousKeySecretHash() != null &&
-                apiKey.getPreviousKeySecretHash().equals(apiKey.getKeyId());
+        return apiKeyEntry.isInGracePeriod() &&
+                apiKeyEntry.keySecretHash() != null &&
+                apiKeyEntry.previousKeySecretHash().equals(apiKeyEntry.keyId());
     }
 
     private String[] decode(String header) {
