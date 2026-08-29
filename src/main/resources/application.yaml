@@ -45,7 +45,7 @@ vault:
 
 app:
   rate-limit:
-    method: fixed
+    method: sliding-lua
     use-case:
       api-key:
         requests-per-minute: 2
