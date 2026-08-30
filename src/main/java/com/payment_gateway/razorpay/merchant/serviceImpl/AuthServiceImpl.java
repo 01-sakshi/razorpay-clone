@@ -40,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public MerchantResponse signUp(MerchantSignupRequest merchantSignupRequest) {
         //Check if merchant already exists
+        // We do not require pessimistic locking for this API, since anyway this API won't allow a request to proceed with duplicate merchant email
         if (merchantRepository.findByEmail(merchantSignupRequest.email()) != null) {
             throw new DuplicateResourceException(ExceptionErrorCode.DUPLICATE_MERCHANT_EMAIL, "Merchant already exists with email :" + merchantSignupRequest.email());
         }

@@ -72,9 +72,9 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         //Remove entry from cache as well
         apiKeyCache.evict(keyId);
 
-        /* Since @Transactional is added, it will automatically detect the change in entity
-        and persist it, no need to explicitly call save() */
-        apiKeyRepository.save(apiKey);
+        /* Dirty Checking: Since @Transactional is added, it will automatically detect the change in entity
+            and persist it, no need to explicitly call save() */
+//        apiKeyRepository.save(apiKey);
         return "Api Key revoked";
     }
 

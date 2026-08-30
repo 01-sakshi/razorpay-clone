@@ -17,6 +17,7 @@ import com.payment_gateway.razorpay.payment.repository.OrderRepository;
 import com.payment_gateway.razorpay.payment.repository.PaymentRepository;
 import com.payment_gateway.razorpay.payment.service.PaymentService;
 import com.payment_gateway.razorpay.payment.statemachine.PaymentTransitionService;
+import com.zaxxer.hikari.util.IsolationLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,12 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public PaymentResponse initiate(UUID merchantId, PaymentInitRequest request) {
-        OrderRecord orderRecord = orderRepository.findByIdAndMerchant(request.orderId(), merchantId)
+//        OrderRecord orderRecord = orderRepository.findByIdAndMerchant(request.orderId(), merchantId)
+//                .orElseThrow(() -> new ResourceNotFoundException("order", request.orderId()));
+
+        //To handle scenarios respect to race conditions on a single resource
+        //Pessimistic Locking: It will only block the transactions having same order and merchant ID
+        OrderRecord orderRecord = orderRepository.findByIdAndMerchantForUpdate(request.orderId(), merchantId)
                 .orElseThrow(() -> new ResourceNotFoundException("order", request.orderId()));
 
         if (!orderRecord.getStatus().equals(OrderStatus.CREATED) &&
@@ -98,8 +104,12 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public PaymentResponse capture(UUID merchantId, UUID paymentId) {
-        Payment payment = paymentRepository.findByIdAndMerchantId(paymentId, merchantId)
+//        Payment payment = paymentRepository.findByIdAndMerchantId(paymentId, merchantId)
+//                .orElseThrow(() -> new ResourceNotFoundException("PAYMENT", paymentId));
+
+        Payment payment = paymentRepository.findByIdAndMerchantIdForUpdate(paymentId, merchantId)
                 .orElseThrow(() -> new ResourceNotFoundException("PAYMENT", paymentId));
 
 //        payment.setStatus(PaymentStatus.CAPTURING);
@@ -128,8 +138,12 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public void resolveAuthorization(UUID paymentId, boolean approve, String bankRef, String errorCode, String errorDescription) {
-        Payment payment = paymentRepository.findById(paymentId).orElseThrow(() ->
+//        Payment payment = paymentRepository.findById(paymentId).orElseThrow(() ->
+//                new ResourceNotFoundException("PAYMENT", paymentId));
+
+        Payment payment = paymentRepository.findByIdForUpdate(paymentId).orElseThrow(() ->
                 new ResourceNotFoundException("PAYMENT", paymentId));
+
         if (!payment.getStatus().equals(PaymentStatus.AUTHORIZING)) {
             log.warn("Payment is not in authorizing state, paymentId: {}, status: {}", paymentId, payment.getStatus());
         }
