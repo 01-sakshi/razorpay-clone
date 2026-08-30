@@ -33,6 +33,8 @@ public class OrderRecord extends BaseAuditEntity {
     @Column(nullable = false)
     private UUID merchant;      // TODO: Change column name to merchantId
 
+    private UUID customerId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Builder.Default

@@ -79,8 +79,8 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
             /* Rate Limiting API requests */
             RateLimitResult rateLimitResult = rateLimiter.check("apiKey:" + keyId, maxRequestsAllowed, 60);
             if (!rateLimitResult.isAllowed()) {
-                log.error("Too many requests for keyId: {}", "apiKey:" + keyId);
-                throw new RateLimitException("Too many requests for key- apiKey:" + keyId, rateLimitResult.retryAfterSeconds());
+                log.error("Too many requests for keyId: {}", keyId);
+                throw new RateLimitException("Too many requests for key - " + keyId, rateLimitResult.retryAfterSeconds());
             }
             response.setHeader("X-RateLimit-Limit", String.valueOf(maxRequestsAllowed));
             response.setHeader("X-RateLimit-Remaining", String.valueOf(rateLimitResult.requestsRemaining()));

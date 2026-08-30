@@ -2,8 +2,7 @@ package com.payment_gateway.razorpay.merchant.entity;
 
 import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -14,6 +13,9 @@ import java.util.UUID;
         })
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Customer extends BaseAuditEntity {
 
     @Id

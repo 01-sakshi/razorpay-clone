@@ -28,7 +28,6 @@ public class CardToken extends BaseAuditEntity {
     @Column(nullable = false)
     private UUID merchantId;
 
-    @Column(nullable = false)
     private UUID customerId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

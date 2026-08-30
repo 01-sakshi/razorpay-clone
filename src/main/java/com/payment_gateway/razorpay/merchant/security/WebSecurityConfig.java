@@ -55,7 +55,7 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin.disable())
                 .addFilterBefore(apiKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) //Add apiKeyAuthenticationFilter before UsernamePasswordAuthenticationFilter in the security chain list
-                .addFilterAfter(jwtAuthenticationFilter, ApiKeyAuthenticationFilter.class)
+                .addFilterAfter(idempotencyFilter, ApiKeyAuthenticationFilter.class)
                 .build();
     }
 

@@ -4,6 +4,7 @@ import com.payment_gateway.razorpay.common.enums.OrderStatus;
 import com.payment_gateway.razorpay.common.exceptions.BusinessRuleViolationException;
 import com.payment_gateway.razorpay.common.exceptions.DuplicateResourceException;
 import com.payment_gateway.razorpay.common.exceptions.ResourceNotFoundException;
+import com.payment_gateway.razorpay.merchant.service.CustomerService;
 import com.payment_gateway.razorpay.payment.dto.request.CreateOrderRequest;
 import com.payment_gateway.razorpay.payment.dto.response.OrderResponse;
 import com.payment_gateway.razorpay.payment.dto.response.PaymentResponse;
@@ -29,6 +30,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
+    private final CustomerService customerService;
     private final PaymentMapper paymentMapper;
     private final OrderMapper orderMapper;
 
@@ -38,15 +40,25 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderResponse create(UUID merchantId, CreateOrderRequest createOrderRequest) {
-        if (createOrderRequest.receipt() != null && orderRepository.existsByReceiptAndMerchant(createOrderRequest.receipt(), merchantId))
+        if (createOrderRequest.receipt() != null &&
+                orderRepository.existsByReceiptAndMerchant(createOrderRequest.receipt(), merchantId))
             throw new DuplicateResourceException("ORDER_RECEIPT_DUPLICATE", "Order already exists");
+
+        UUID customerId = null;
+        CreateOrderRequest.CustomerDetails customer = createOrderRequest.customer();
+        if(customer != null) {
+            //Meaning, the order request is from an active customer account, not a guest one.
+            customerId = customerService.findOrCreate(merchantId, customer.name(), customer.phone(), customer.email());
+        }
 
         OrderRecord orderRecord = OrderRecord.builder()
                 .notes(createOrderRequest.notes())
                 .amount(createOrderRequest.amount())
                 .receipt(createOrderRequest.receipt())
                 .merchant(merchantId)
-                .expiresAt(createOrderRequest.expiresAt() != null ? createOrderRequest.expiresAt() : Instant.now().plusSeconds(defaultOrderExpirySeconds))
+                .customerId(customerId)
+                .expiresAt(createOrderRequest.expiresAt() != null ? createOrderRequest.expiresAt()
+                        : Instant.now().plusSeconds(defaultOrderExpirySeconds))
                 .build();
         return orderMapper.toResponse(orderRepository.save(orderRecord));
     }

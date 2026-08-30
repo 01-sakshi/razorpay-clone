@@ -65,12 +65,12 @@ public class GlobalExceptionHandler {
                 .header("X-RateLimit-Remaining", String.valueOf(e.getRequestsRemaining()))
                 .header("X-Retry-After", String.valueOf(e.getRetryAfterSeconds()))
                 .header("X-RateLimit-Reset", String.valueOf(Instant.now().plusSeconds(e.getRetryAfterSeconds()).getEpochSecond()))   //Why???
-                .body(ErrorResponse.of("", e.getMessage()));
+                .body(ErrorResponse.of("RATE_LIMIT_EXCEEDED", e.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ErrorResponse.of("RATE_LIMIT_EXCEEDED", e.getMessage()));
+                .body(ErrorResponse.of("ERROR", e.getMessage()));
     }
 }

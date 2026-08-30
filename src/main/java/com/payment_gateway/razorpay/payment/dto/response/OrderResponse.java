@@ -12,6 +12,7 @@ import java.util.UUID;
 public record OrderResponse(
         UUID orderId,
         UUID merchantId,
+        UUID customerId,
         Map<String, Object> notes,
         String receipt,     //This is order-id at merchant's end
         Money amount,
