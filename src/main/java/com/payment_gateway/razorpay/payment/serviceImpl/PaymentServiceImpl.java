@@ -1,5 +1,6 @@
 package com.payment_gateway.razorpay.payment.serviceImpl;
 
+import com.payment_gateway.razorpay.common.enums.EventAggregateType;
 import com.payment_gateway.razorpay.common.enums.OrderStatus;
 import com.payment_gateway.razorpay.common.enums.PaymentEvent;
 import com.payment_gateway.razorpay.common.enums.PaymentStatus;
@@ -13,17 +14,18 @@ import com.payment_gateway.razorpay.payment.gateway.PaymentGatewayRouter;
 import com.payment_gateway.razorpay.payment.gateway.dto.PaymentRequest;
 import com.payment_gateway.razorpay.payment.gateway.dto.PaymentResult;
 import com.payment_gateway.razorpay.payment.mapper.PaymentMapper;
+import com.payment_gateway.razorpay.payment.outbox.OutboxEventPublisher;
 import com.payment_gateway.razorpay.payment.repository.OrderRepository;
 import com.payment_gateway.razorpay.payment.repository.PaymentRepository;
 import com.payment_gateway.razorpay.payment.service.PaymentService;
 import com.payment_gateway.razorpay.payment.statemachine.PaymentTransitionService;
-import com.zaxxer.hikari.util.IsolationLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -34,6 +36,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentGatewayRouter paymentGatewayRouter;
     private final PaymentMapper paymentMapper;
+    private final OutboxEventPublisher eventPublisher;
 
     private final PaymentTransitionService paymentTransitionService;
 
@@ -100,6 +103,16 @@ public class PaymentServiceImpl implements PaymentService {
 
         payment = paymentRepository.save(payment);
         orderRecord = orderRepository.save(orderRecord);
+
+        eventPublisher.publish(EventAggregateType.PAYMENT, payment.getId(), "PAYMENT_CREATED",
+                Map.of("orderId", orderRecord.getId(),
+                        "paymentId", payment.getId(),
+                        "merchantId", merchantId.toString(),
+                        "paymentStatus", payment.getStatus().name(),
+                        "amountUnits", orderRecord.getAmount().getAmountUnits(),
+                        "amountCurrency", orderRecord.getAmount().getCurrency(),
+                        "paymentMethod", payment.getMethod()));
+
         return paymentMapper.toResponse(payment);
     }
 
@@ -132,6 +145,16 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         payment = paymentRepository.save(payment);
+
+        eventPublisher.publish(EventAggregateType.PAYMENT, payment.getId(), "PAYMENT_STATUS_CHANGED",
+                Map.of("orderId", payment.getOrderRecord().getId(),
+                        "paymentId", payment.getId(),
+                        "merchantId", merchantId.toString(),
+                        "paymentStatus", payment.getStatus().name(),
+                        "amountUnits", payment.getAmount().getAmountUnits(),
+                        "amountCurrency", payment.getAmount().getCurrency(),
+                        "paymentMethod", payment.getMethod()));
+
         return paymentMapper.toResponse(payment);
     }
 
@@ -178,5 +201,14 @@ public class PaymentServiceImpl implements PaymentService {
             not getting executed at all */
         payment = paymentRepository.save(payment);
         orderRecord = orderRepository.save(orderRecord);
+
+        eventPublisher.publish(EventAggregateType.PAYMENT, paymentId, "PAYMENT_STATUS_CHANGED",
+                Map.of("orderId", orderRecord.getId().toString(),
+                        "paymentId", paymentId.toString(),
+                        "merchantId", payment.getMerchantId().toString(),
+                        "paymentStatus", payment.getStatus().name(),
+                        "amountUnits", payment.getAmount().getAmountUnits(),
+                        "amountCurrency", payment.getAmount().getCurrency(),
+                        "paymentMethod", payment.getMethod()));
     }
 }
