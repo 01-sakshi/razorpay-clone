@@ -2,8 +2,11 @@ package com.payment_gateway.razorpay.operations.entity;
 
 import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -17,6 +20,8 @@ import java.util.UUID;
 )
 @Getter
 @Setter
+@ToString 
+@Builder 
 public class DlqEvent extends BaseAuditEntity {
 
     @Id
@@ -25,6 +30,7 @@ public class DlqEvent extends BaseAuditEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "webhook-event-id")
+    @ToString.Exclude
     private WebhookEvent webhookEvent;
 
     private UUID merchantId;

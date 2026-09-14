@@ -15,6 +15,7 @@ import java.util.UUID;
         })
 @Getter
 @Setter
+@ToString 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,6 +26,7 @@ public class ApiKey extends BaseAuditEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "merchant_id", nullable = false)
+    @ToString.Exclude
     private Merchant merchant;
 
     @Column(nullable = false, unique = true, length = 50)

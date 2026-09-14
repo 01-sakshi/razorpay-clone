@@ -40,6 +40,12 @@ spring:
         spring.json.trusted.packages:
         spring.json.use.type.headers: false
         spring.json.value.default.type: java.util.LinkedHashMap
+  output:
+    ansi:
+      enabled: ALWAYS
+  threads:
+    virtual:
+      enabled: true
 
 payment:
   order:
@@ -78,7 +84,11 @@ app:
       order: order.events
       refund: refund.events
       settlement: settlement.events
+  webhook:
+    delivery:
+      redis-key: webhook-retry
+      poll-batch-size: 100
+      signature-header: X-Razorpay-Signature
 
 jwt:
   secret: ab81uapox02nxvgxuw6382hdxjw02836edgbcxjk2qw
-

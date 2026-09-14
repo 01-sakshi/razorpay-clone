@@ -44,7 +44,7 @@ public class VaultServiceImpl implements VaultService {
         String bin = tokenizeRequest.pan().substring(0, 6); //First six digits of PAN
         CardBrand cardBrand = detectBrand(bin);
         byte[] dek = KeyGenerators.secureRandom(32).generateKey();
-        byte[] encryptedPan = VaultServiceConfig.panEncrypter(dek)
+        byte[] encryptedPan = VaultServiceConfig.panEncryptor(dek)
                 .encrypt(tokenizeRequest.pan().getBytes(StandardCharsets.UTF_8));
         byte[] encryptedDek = decEncryptor.encrypt(dek);
 
@@ -92,7 +92,7 @@ public class VaultServiceImpl implements VaultService {
         try {
             byte[] encryptedDek = vaultCard.getEncryptedDek();
             byte[] decryptedDek = decEncryptor.decrypt(encryptedDek);
-            decryptedPanBytes = VaultServiceConfig.panEncrypter(decryptedDek).decrypt(vaultCard.getEncryptedDek());
+            decryptedPanBytes = VaultServiceConfig.panEncryptor(decryptedDek).decrypt(vaultCard.getEncryptedDek());
             String pan = new String(decryptedPanBytes, StandardCharsets.UTF_8);
             String expiry = vaultCard.getExpiryMonth() + "/" + vaultCard.getExpiryYear();
 

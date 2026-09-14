@@ -66,10 +66,11 @@ public class OrderServiceImpl implements OrderService {
                 .expiresAt(createOrderRequest.expiresAt() != null ? createOrderRequest.expiresAt()
                         : Instant.now().plusSeconds(defaultOrderExpirySeconds))
                 .build();
+        log.info("Order Record: {}", orderRecord.toString());
         orderRecord = orderRepository.save(orderRecord);
-
+        log.info("Order Record: {}", orderRecord.toString());
         eventPublisher.publish(EventAggregateType.ORDER, orderRecord.getId(), "ORDER_CREATED",
-                Map.of("orderId", orderRecord.getId().toString(),
+                Map.of("orderId", orderRecord.getId(),
                         "merchantId", merchantId.toString(),
                         "status", orderRecord.getStatus().name(),
                         "amountUnits", orderRecord.getAmount().getAmountUnits(),

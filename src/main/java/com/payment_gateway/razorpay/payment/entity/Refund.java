@@ -6,6 +6,8 @@ import com.payment_gateway.razorpay.common.enums.RefundStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -22,6 +24,7 @@ import java.util.UUID;
 )
 @Getter
 @Setter
+@ToString 
 public class Refund extends BaseAuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -29,6 +32,7 @@ public class Refund extends BaseAuditEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "payment_id", nullable = false)
+    @ToString.Exclude
     private Payment payment;
 
     @Embedded

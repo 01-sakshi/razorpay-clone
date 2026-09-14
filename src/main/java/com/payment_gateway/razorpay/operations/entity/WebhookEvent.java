@@ -3,8 +3,7 @@ package com.payment_gateway.razorpay.operations.entity;
 import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import com.payment_gateway.razorpay.common.enums.WebhookEventStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -18,9 +17,14 @@ import java.util.UUID;
 )
 @Getter
 @Setter
+@ToString 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class WebhookEvent extends BaseAuditEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
@@ -29,7 +33,7 @@ public class WebhookEvent extends BaseAuditEntity {
     @Column(nullable = false)
     private String eventType;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private WebhookEventStatus eventStatus;
 
     @JdbcTypeCode(SqlTypes.JSON)
@@ -37,6 +41,7 @@ public class WebhookEvent extends BaseAuditEntity {
     private Map<String, Object> payload;
 
     @Column(nullable = false)
+    @Builder.Default
     private Integer attempts = 0;
 
     private String signature;

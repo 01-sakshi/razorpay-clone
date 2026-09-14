@@ -4,6 +4,7 @@ import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(
@@ -11,6 +12,7 @@ import lombok.Setter;
 )
 @Getter
 @Setter
+@ToString 
 public class SettlementPayment extends BaseAuditEntity {
 
     @EmbeddedId
@@ -19,5 +21,6 @@ public class SettlementPayment extends BaseAuditEntity {
     @MapsId("settlementId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "settlement_id", nullable = false)
+    @ToString.Exclude
     private Settlement settlement;
 }

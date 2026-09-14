@@ -13,6 +13,7 @@ import java.util.UUID;
 )
 @Getter
 @Setter
+@ToString 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,6 +33,7 @@ public class CardToken extends BaseAuditEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "vault_card_id", nullable = false)
+    @ToString.Exclude
     private VaultCard vaultCard;        //For one card, multiple card tokens can be generated for one or more merchants
 
     private Instant revokedAt;

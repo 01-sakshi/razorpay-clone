@@ -23,6 +23,7 @@ import java.util.UUID;
         })
 @Getter
 @Setter
+@ToString 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,6 +35,7 @@ public class Payment extends BaseAuditEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id", nullable = false)
+    @ToString.Exclude
     private OrderRecord orderRecord;
 
     @Enumerated(EnumType.STRING)
@@ -47,6 +49,7 @@ public class Payment extends BaseAuditEntity {
     private Money amount;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private PaymentMethod method;
 
     @JdbcTypeCode(SqlTypes.JSON)

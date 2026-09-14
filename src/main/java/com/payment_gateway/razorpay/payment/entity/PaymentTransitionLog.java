@@ -19,6 +19,7 @@ import java.util.UUID;
 )
 @Getter
 @Setter
+@ToString 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,6 +31,7 @@ public class PaymentTransitionLog extends BaseAuditEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "payment_id", nullable = false)
+    @ToString.Exclude
     private Payment payment;
 
     @Enumerated(EnumType.STRING)

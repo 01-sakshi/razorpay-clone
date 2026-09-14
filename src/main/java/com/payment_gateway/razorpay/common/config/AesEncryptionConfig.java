@@ -1,24 +1,27 @@
-package com.payment_gateway.razorpay.vault.config;
+package com.payment_gateway.razorpay.common.config;
+
+import java.util.Base64;
+
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 
-import javax.crypto.spec.SecretKeySpec;
-
-@Configuration
-public class VaultServiceConfig {
+@Configuration 
+public class AesEncryptionConfig {
 
     @Value("${vault.service.master-key}")
     private String masterKey;
-
-
-    public static BytesEncryptor panEncryptor(byte[] dek) {
-        SecretKeySpec decKey = new SecretKeySpec(dek, "AES");   //Use dek to encrypt by using AES algo
+    
+    @Bean 
+    public BytesEncryptor masterKeyEncryptor() {
+        byte[] masterKeyBytes = Base64.getDecoder().decode(masterKey);
+        SecretKeySpec decKey = new SecretKeySpec(masterKeyBytes, "AES");   //Use masterKeyBytes to encrypt using AES algo
         return new AesBytesEncryptor(decKey,
                 KeyGenerators.secureRandom(12), AesBytesEncryptor.CipherAlgorithm.GCM);
-
     }
 }
