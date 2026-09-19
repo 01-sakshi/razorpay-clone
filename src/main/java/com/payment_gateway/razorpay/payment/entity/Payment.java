@@ -40,6 +40,7 @@ public class Payment extends BaseAuditEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
+    @Builder.Default
     private PaymentStatus status = PaymentStatus.CREATED;
 
     @Column(nullable = false)

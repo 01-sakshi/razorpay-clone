@@ -15,7 +15,7 @@ import org.springframework.transaction.CannotCreateTransactionException;
 import com.payment_gateway.razorpay.common.dto.WebhookTarget;
 import com.payment_gateway.razorpay.common.enums.WebhookEventStatus;
 import com.payment_gateway.razorpay.common.util.SignerUtil;
-import com.payment_gateway.razorpay.merchant.api.MerchantWebhookApi;
+import com.payment_gateway.razorpay.merchant.api.MerchantLookupService;
 import com.payment_gateway.razorpay.operations.entity.WebhookEvent;
 import com.payment_gateway.razorpay.operations.repository.WebhookEventRepository;
 
@@ -28,7 +28,7 @@ import tools.jackson.databind.json.JsonMapper;
 @Slf4j
 public class WebhookKafkaConsumer {
 
-    private final MerchantWebhookApi merchantWebhookApi;
+    private final MerchantLookupService merchantWebhookApi;
     private final JsonMapper jsonMapper;
     private final SignerUtil signerUtil;
     private final WebhookEventRepository webhookEventRepository;

@@ -2,7 +2,10 @@ package com.payment_gateway.razorpay.operations.entity;
 
 import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -12,6 +15,9 @@ import lombok.ToString;
 )
 @Getter
 @Setter
+@NoArgsConstructor 
+@AllArgsConstructor 
+@Builder 
 @ToString 
 public class SettlementPayment extends BaseAuditEntity {
 

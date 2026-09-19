@@ -5,10 +5,15 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.stereotype.Service;
 
+import com.payment_gateway.razorpay.common.dto.SettlementBankDetails;
 import com.payment_gateway.razorpay.common.dto.WebhookTarget;
+import com.payment_gateway.razorpay.common.enums.MerchantStatus;
+import com.payment_gateway.razorpay.merchant.entity.Merchant;
+import com.payment_gateway.razorpay.merchant.repository.MerchantRepository;
 import com.payment_gateway.razorpay.merchant.repository.WebhookConfigRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -17,9 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class MerchantWebhookApiImpl implements MerchantWebhookApi {
+public class MerchantLookupServiceImpl implements MerchantLookupService {
 
     private final WebhookConfigRepository webhookConfigRepository;
+    private final MerchantRepository merchantRepository;
     private final BytesEncryptor bytesEncryptor;
 
     @Override
@@ -34,6 +40,21 @@ public class MerchantWebhookApiImpl implements MerchantWebhookApi {
                             new String(decryptedSecretBytes, StandardCharsets.UTF_8));
                 })
                 .toList();
+    }
+
+    @Override
+    public List<UUID> getAllActiveMerchants() {
+        List<UUID> merchantIds = merchantRepository.findAllIdsByStatus(MerchantStatus.ACTIVE);
+        log.info("All active merchant ids: {}", merchantIds);
+        return merchantIds;
+    }
+
+    @Override
+    public SettlementBankDetails getSettlementBankDetails(UUID merchantId) {
+        Merchant merchant = merchantRepository.findById(merchantId)
+                .orElseThrow(() -> new ResourceNotFoundException("No merchant found for merchant id: " + merchantId));
+        return new SettlementBankDetails(merchant.getSettlementBankAccount(), merchant.getSettlementBankIfsc(),
+                merchant.getSettlementBankAccountHolderName());
     }
 
 }

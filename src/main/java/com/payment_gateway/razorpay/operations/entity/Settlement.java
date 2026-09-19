@@ -4,6 +4,7 @@ import com.payment_gateway.razorpay.common.entity.BaseAuditEntity;
 import com.payment_gateway.razorpay.common.entity.Money;
 import com.payment_gateway.razorpay.common.enums.SettlementStatus;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString 
+@Builder 
 public class Settlement extends BaseAuditEntity {
 
     @Id
@@ -63,4 +65,6 @@ public class Settlement extends BaseAuditEntity {
     private String bankReference;
 
     private Instant settledAt;  //processedAt
+
+    private String failureReason;
 }

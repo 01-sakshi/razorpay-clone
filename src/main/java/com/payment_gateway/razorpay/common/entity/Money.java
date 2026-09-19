@@ -24,7 +24,7 @@ public class Money {
 
     }
 
-    public Money of(Long amountUnits, String currency) {
+    public static Money of(Long amountUnits, String currency) {
         return new Money(amountUnits, currency);
     }
 
