@@ -51,7 +51,7 @@ public class WebhookConfigController {
                 .ok(webhookConfigService.update(merchantContext.getMerchantId(), configId, webhookConfigRequest));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{configId}")
     public ResponseEntity<Void> delete(@PathVariable UUID configId) {
         webhookConfigService.delete(merchantContext.getMerchantId(), configId);
         return ResponseEntity.noContent().build();

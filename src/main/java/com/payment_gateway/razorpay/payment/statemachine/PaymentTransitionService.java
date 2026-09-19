@@ -22,6 +22,7 @@ public class PaymentTransitionService {
         PaymentStatus toStatus = paymentStateMachine.transition(payment.getStatus(), paymentEvent);
         PaymentTransitionLog paymentTransitionLog = PaymentTransitionLog
                 .builder()
+                .payment(payment)
                 .event(paymentEvent)
                 .fromStatus(payment.getStatus())
                 .toStatus(toStatus)

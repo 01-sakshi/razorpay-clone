@@ -28,4 +28,5 @@ scripts:
           pm.expect(json).to.have.property("id");
           pm.expect(json).to.have.property("targetUrl");
           pm.expect(json).to.have.property("webhookSecret");
+          pm.collectionVariables.set("webhookConfigId", json.id);
       });

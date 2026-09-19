@@ -70,6 +70,7 @@ public class SettlementTransactionExecutor {
                 .grossAmount(gross)
                 .gstAmount(gstAmount)
                 .netAmount(netAmount)
+                .refundAmount(Money.of(0l, gross.getCurrency()))
                 .status(SettlementStatus.INITIATED)
                 .build();
         settlement = settlementRepository.save(settlement);
@@ -98,7 +99,7 @@ public class SettlementTransactionExecutor {
         settlementRepository.save(settlement);
     }
 
-    @Transactional 
+    @Transactional
     public void resolveTransfer(UUID settlementId, String errorCode, String errorDescription) {
         Settlement settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(() -> new ResourceNotFoundException("SETTLEMENT", settlementId));

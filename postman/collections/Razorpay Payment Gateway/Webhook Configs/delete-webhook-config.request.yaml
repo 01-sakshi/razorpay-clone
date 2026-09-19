@@ -1,7 +1,7 @@
 $kind: http-request
 name: Delete Webhook Config
 method: DELETE
-url: '{{baseUrl}}/v1/merchants/webhooks'
+url: '{{baseUrl}}/v1/merchants/webhooks/:configId'
 order: 5000
 scripts:
   - type: afterResponse

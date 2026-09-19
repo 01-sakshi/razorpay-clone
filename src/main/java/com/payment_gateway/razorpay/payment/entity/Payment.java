@@ -57,7 +57,7 @@ public class Payment extends BaseAuditEntity {
     @Column(columnDefinition = "jsonb")
     private Map<String, Object> methodDetails;
 
-    @Column(nullable = false, length = 30)
+    @Column(length = 30)
     private String idempotencyKey;  //Doubt: Why wasn't it added for OrderRecord?
 
     @Column(length = 100)

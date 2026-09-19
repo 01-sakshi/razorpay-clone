@@ -1,13 +1,13 @@
 $kind: http-request
 name: Create Order
 method: POST
-url: '{{baseUrl}}/v1/orders'
+url: "{{baseUrl}}/v1/orders"
 order: 1000
 headers:
   - key: Content-Type
     value: application/json
   - key: X-Idempotency-Key
-    value: '{{$guid}}'
+    value: "{{$guid}}"
     description: Optional idempotency key to prevent duplicate order creation
 body:
   type: json
@@ -29,7 +29,6 @@ body:
     }
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status is 201 Created", function () {
           pm.response.to.have.status(201);
@@ -39,4 +38,6 @@ scripts:
           pm.expect(json).to.have.property("orderId");
           pm.expect(json).to.have.property("status");
           pm.collectionVariables.set("orderId", json.orderId);
+          pm.collectionVariables.set("webhookConfigId", json.id)
       });
+    language: text/javascript
