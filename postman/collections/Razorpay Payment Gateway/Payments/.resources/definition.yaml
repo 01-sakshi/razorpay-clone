@@ -1,0 +1,14 @@
+$kind: collection
+name: Payments
+description: |-
+  Initiate and capture payments against orders.
+  Requires HTTP Basic authentication using API Key credentials (keyId:keySecret, Base64-encoded).
+  The Authorization header format is: Basic base64(keyId:keySecret)
+order: 5000
+auth:
+  type: basic
+  credentials:
+    - key: username
+      value: '{{apiKeyId}}'
+    - key: password
+      value: '{{apiKeySecret}}'

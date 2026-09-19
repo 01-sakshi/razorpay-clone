@@ -1,0 +1,22 @@
+$kind: http-request
+name: Rotate API Key
+method: POST
+url: '{{baseUrl}}/v1/merchants/api-keys/rotate/:keyId'
+order: 4000
+pathVariables:
+  - key: keyId
+    value: '{{apiKeyId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 201 Created", function () {
+          pm.response.to.have.status(201);
+      });
+      pm.test("Response contains new keyId and keySecret", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("keyId");
+          pm.expect(json).to.have.property("keySecret");
+          pm.collectionVariables.set("apiKeyId", json.keyId);
+          pm.collectionVariables.set("apiKeySecret", json.keySecret);
+      });

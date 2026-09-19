@@ -1,0 +1,36 @@
+$kind: http-request
+name: Initiate Payment
+method: POST
+url: '{{baseUrl}}/v1/payments'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: X-Idempotency-Key
+    value: '{{$guid}}'
+    description: Optional idempotency key to prevent duplicate payment initiation
+body:
+  type: json
+  content: |-
+    {
+      "orderId": "{{orderId}}",
+      "paymentMethod": "CARD",
+      "methodDetails": {
+        "cardToken": "tok_abc123xyz",
+        "cvv": "123"
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 201 Created", function () {
+          pm.response.to.have.status(201);
+      });
+      pm.test("Response has payment id and status", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("id");
+          pm.expect(json).to.have.property("status");
+          pm.expect(json).to.have.property("method");
+          pm.collectionVariables.set("paymentId", json.id);
+      });

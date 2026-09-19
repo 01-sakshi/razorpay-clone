@@ -1,0 +1,21 @@
+$kind: http-request
+name: Capture Payment
+method: POST
+url: '{{baseUrl}}/v1/payments/capture/:paymentId'
+order: 2000
+pathVariables:
+  - key: paymentId
+    value: '{{paymentId}}'
+    description: UUID of the payment to capture
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Response has payment status", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("id");
+          pm.expect(json).to.have.property("status");
+      });

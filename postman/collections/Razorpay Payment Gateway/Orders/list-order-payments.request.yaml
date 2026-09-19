@@ -1,0 +1,19 @@
+$kind: http-request
+name: List Order Payments
+method: GET
+url: '{{baseUrl}}/v1/orders/:orderId/payments'
+order: 4000
+pathVariables:
+  - key: orderId
+    value: '{{orderId}}'
+    description: UUID of the order
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Response is an array", function () {
+          pm.expect(pm.response.json()).to.be.an("array");
+      });

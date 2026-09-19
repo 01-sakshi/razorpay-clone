@@ -1,0 +1,22 @@
+$kind: http-request
+name: Get Order
+method: GET
+url: '{{baseUrl}}/v1/orders/:orderId'
+order: 2000
+pathVariables:
+  - key: orderId
+    value: '{{orderId}}'
+    description: UUID of the order
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Response has orderId and status", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("orderId");
+          pm.expect(json).to.have.property("status");
+          pm.expect(json).to.have.property("amount");
+      });

@@ -1,0 +1,22 @@
+$kind: http-request
+name: Get Webhook Config
+method: GET
+url: '{{baseUrl}}/v1/merchants/webhooks/:configId'
+order: 3000
+pathVariables:
+  - key: configId
+    value: '{{webhookConfigId}}'
+    description: UUID of the webhook configuration
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Response has expected fields", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("id");
+          pm.expect(json).to.have.property("targetUrl");
+          pm.expect(json).to.have.property("enabled");
+      });

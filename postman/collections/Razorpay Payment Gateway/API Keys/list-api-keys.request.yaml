@@ -1,0 +1,15 @@
+$kind: http-request
+name: List API Keys
+method: GET
+url: '{{baseUrl}}/v1/merchants/api-keys'
+order: 2000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Response is an array", function () {
+          pm.expect(pm.response.json()).to.be.an("array");
+      });

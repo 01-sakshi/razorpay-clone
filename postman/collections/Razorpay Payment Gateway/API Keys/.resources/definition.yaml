@@ -1,0 +1,11 @@
+$kind: collection
+name: API Keys
+description: |-
+  Manage merchant API keys used for authenticating payment/order/vault API calls.
+  Requires JWT Bearer token in the Authorization header.
+order: 2000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{jwtToken}}'

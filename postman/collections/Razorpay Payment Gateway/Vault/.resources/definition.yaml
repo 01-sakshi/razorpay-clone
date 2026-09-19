@@ -1,0 +1,14 @@
+$kind: collection
+name: Vault
+description: |-
+  Tokenize sensitive card data for secure storage and reuse in payments.
+  Requires HTTP Basic authentication using API Key credentials (keyId:keySecret, Base64-encoded).
+  The Authorization header format is: Basic base64(keyId:keySecret)
+order: 6000
+auth:
+  type: basic
+  credentials:
+    - key: username
+      value: '{{apiKeyId}}'
+    - key: password
+      value: '{{apiKeySecret}}'

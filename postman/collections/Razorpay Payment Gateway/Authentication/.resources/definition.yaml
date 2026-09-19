@@ -1,0 +1,4 @@
+$kind: collection
+name: Authentication
+description: Public endpoints for merchant registration and login. No authentication required.
+order: 1000

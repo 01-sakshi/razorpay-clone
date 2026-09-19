@@ -1,0 +1,25 @@
+$kind: collection
+name: Razorpay Payment Gateway
+description: |-
+  Complete API collection for the Razorpay Payment Gateway Spring Boot application.
+
+  **Authentication:**
+  - `/v1/auth/**` — Public (no auth required)
+  - `/v1/merchants/**` — JWT Bearer token (obtained from login)
+  - `/v1/orders/**`, `/v1/payments/**`, `/v1/vault/**` — HTTP Basic with API Key credentials (keyId:keySecret, Base64-encoded)
+
+  **Idempotency:**
+  POST, PUT, and PATCH requests support the optional `X-Idempotency-Key` header to prevent duplicate processing.
+variables:
+  - key: baseUrl
+    value: 'http://localhost:8080'
+    description: Base URL of the running application
+  - key: jwtToken
+    value: ''
+    description: JWT Bearer token obtained from POST /v1/auth/login
+  - key: apiKeyId
+    value: ''
+    description: API Key ID (keyId) from POST /v1/merchants/api-keys
+  - key: apiKeySecret
+    value: ''
+    description: API Key Secret (keySecret) from POST /v1/merchants/api-keys

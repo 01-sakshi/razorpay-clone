@@ -1,0 +1,33 @@
+$kind: http-request
+name: Update Webhook Config
+method: PUT
+url: '{{baseUrl}}/v1/merchants/webhooks/:configId'
+order: 4000
+pathVariables:
+  - key: configId
+    value: '{{webhookConfigId}}'
+    description: UUID of the webhook configuration to update
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: X-Idempotency-Key
+    value: '{{$guid}}'
+    description: Optional idempotency key
+body:
+  type: json
+  content: |-
+    {
+      "targetUrl": "https://your-server.example.com/webhooks/razorpay-updated",
+      "eventTypes": "PAYMENT_STATUS_CHANGED,REFUND_CREATED,SETTLEMENT_CREATED"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Response has updated targetUrl", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("targetUrl");
+      });
