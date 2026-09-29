@@ -1,0 +1,39 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/auth/signup"
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "name": "Sakshi Aggarwal",
+        "email": "sakshi@example.com",
+        "password": "password",
+        "businessName": "Sakshi Stores",
+        "businessType": "PROPRIETORSHIP"
+      }
+response:
+  statusCode: 400
+  statusText: ""
+  headers:
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Sat, 19 Sep 2026 10:35:39 GMT
+    connection: close
+  body:
+    type: json
+    content: |-
+      {
+        "errorCode": "VALIDATION_FAILED",
+        "errorDescription": "Request validation failed",
+        "fieldErrors": [
+          {
+            "field": "password",
+            "message": "Password should be at least 12 characters"
+          }
+        ],
+        "timeStamp": "2026-09-19T10:35:39.291880900Z"
+      }
+order: 1536210945234613

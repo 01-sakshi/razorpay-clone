@@ -48,21 +48,27 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public PaymentResponse initiate(UUID merchantId, PaymentInitRequest request) {
-//        OrderRecord orderRecord = orderRepository.findByIdAndMerchant(request.orderId(), merchantId)
-//                .orElseThrow(() -> new ResourceNotFoundException("order", request.orderId()));
+        // OrderRecord orderRecord =
+        // orderRepository.findByIdAndMerchant(request.orderId(), merchantId)
+        // .orElseThrow(() -> new ResourceNotFoundException("order",
+        // request.orderId()));
 
-        //To handle scenarios respect to race conditions on a single resource
-        //Pessimistic Locking: It will only block the transactions having same order and merchant ID
+        // To handle scenarios respect to race conditions on a single resource
+        // Pessimistic Locking: It will only block the transactions having same order
+        // and merchant ID
         OrderRecord orderRecord = orderRepository.findByIdAndMerchantForUpdate(request.orderId(), merchantId)
                 .orElseThrow(() -> new ResourceNotFoundException("order", request.orderId()));
 
         if (!orderRecord.getStatus().equals(OrderStatus.CREATED) &&
                 !orderRecord.getStatus().equals(OrderStatus.ATTEMPTED)) {
-            throw new BusinessRuleViolationException("ORDER_NOT_PAYABLE", "order", request.orderId());
+            log.warn("Order is not in a payable state, orderId: {}, status: {}", request.orderId(),
+                    orderRecord.getStatus());
+            throw new BusinessRuleViolationException("ORDER_NOT_PAYABLE", "Order is not in a payable state", "ORDER",
+                    request.orderId());
         }
 
         orderRecord.setStatus(OrderStatus.ATTEMPTED);
-        orderRecord.setAttempts(orderRecord.getAttempts() + 1); //payment attempt on this order
+        orderRecord.setAttempts(orderRecord.getAttempts() + 1); // payment attempt on this order
 
         Payment payment = Payment
                 .builder()
@@ -85,17 +91,17 @@ public class PaymentServiceImpl implements PaymentService {
                 payment.getAmount()));
 
         switch (paymentResult) {
-            case PaymentResult.Pending pending ->    //record pattern
-                    payment.setProcessorReference(pending.registrationRef());
+            case PaymentResult.Pending pending -> // record pattern
+                payment.setProcessorReference(pending.registrationRef());
             case PaymentResult.Failure failure -> {
                 IO.println("failure:" + failure);
-//                payment.setStatus(PaymentStatus.FAILED);
+                // payment.setStatus(PaymentStatus.FAILED);
                 paymentTransitionService.apply(payment, PaymentEvent.AUTHORIZE_FAIL);
                 payment.setErrorCode(failure.errorCode());
                 payment.setErrorDescription(failure.errorDescription());
             }
             case PaymentResult.Success success -> {
-//                payment.setProcessorReference(success.bankReference());
+                // payment.setProcessorReference(success.bankReference());
                 log.warn("Invalid state");
                 return null;
             }
@@ -119,26 +125,27 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public PaymentResponse capture(UUID merchantId, UUID paymentId) {
-//        Payment payment = paymentRepository.findByIdAndMerchantId(paymentId, merchantId)
-//                .orElseThrow(() -> new ResourceNotFoundException("PAYMENT", paymentId));
+        // Payment payment = paymentRepository.findByIdAndMerchantId(paymentId,
+        // merchantId)
+        // .orElseThrow(() -> new ResourceNotFoundException("PAYMENT", paymentId));
 
         Payment payment = paymentRepository.findByIdAndMerchantIdForUpdate(paymentId, merchantId)
                 .orElseThrow(() -> new ResourceNotFoundException("PAYMENT", paymentId));
 
-//        payment.setStatus(PaymentStatus.CAPTURING);
+        // payment.setStatus(PaymentStatus.CAPTURING);
         paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_REQUEST);
 
-        //pass request to PaymentGatewayRouter to get the payment captured.
+        // pass request to PaymentGatewayRouter to get the payment captured.
         PaymentResult paymentResult = paymentGatewayRouter.capture(payment.getMethod(), paymentId);
 
         if (paymentResult instanceof PaymentResult.Failure failure) {
-//            payment.setStatus(PaymentStatus.AUTHORIZED);
+            // payment.setStatus(PaymentStatus.AUTHORIZED);
             paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_FAIL);
             payment.setErrorCode(failure.errorCode());
             payment.setErrorDescription(failure.errorDescription());
             log.error("Payment captured failed, paymentId: {}", paymentId);
         } else if (paymentResult instanceof PaymentResult.Success success) {
-//            payment.setStatus(PaymentStatus.CAPTURED);
+            // payment.setStatus(PaymentStatus.CAPTURED);
             paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_SUCCESS);
             payment.setCapturedAt(Instant.now());
             log.info("Payment captured, paymentId: {}", paymentId);
@@ -160,12 +167,13 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public void resolveAuthorization(UUID paymentId, boolean approve, String bankRef, String errorCode, String errorDescription) {
-//        Payment payment = paymentRepository.findById(paymentId).orElseThrow(() ->
-//                new ResourceNotFoundException("PAYMENT", paymentId));
+    public void resolveAuthorization(UUID paymentId, boolean approve, String bankRef, String errorCode,
+            String errorDescription) {
+        // Payment payment = paymentRepository.findById(paymentId).orElseThrow(() ->
+        // new ResourceNotFoundException("PAYMENT", paymentId));
 
-        Payment payment = paymentRepository.findByIdForUpdate(paymentId).orElseThrow(() ->
-                new ResourceNotFoundException("PAYMENT", paymentId));
+        Payment payment = paymentRepository.findByIdForUpdate(paymentId)
+                .orElseThrow(() -> new ResourceNotFoundException("PAYMENT", paymentId));
 
         if (!payment.getStatus().equals(PaymentStatus.AUTHORIZING)) {
             log.warn("Payment is not in authorizing state, paymentId: {}, status: {}", paymentId, payment.getStatus());
@@ -178,9 +186,9 @@ public class PaymentServiceImpl implements PaymentService {
             payment.setBankReference(payment.getBankReference());
             payment.setAuthorizedAt(Instant.now());
 
-            //Auto-capture payment
+            // Auto-capture payment
             paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_REQUEST);
-            //Send request to payment gateway router to get the payment captured
+            // Send request to payment gateway router to get the payment captured
             PaymentResult capture = paymentGatewayRouter.capture(payment.getMethod(), paymentId);
 
             if (capture instanceof PaymentResult.Success success) {
@@ -196,9 +204,13 @@ public class PaymentServiceImpl implements PaymentService {
             paymentTransitionService.apply(payment, PaymentEvent.AUTHORIZE_FAIL);
         }
 
-         /* Dirty-Checking may work here leading to orderRecord getting updated as part of
-            paymentRepository.save(payment) itself, leading to orderRepository.save(orderRecord)
-            not getting executed at all */
+        /*
+         * Dirty-Checking may work here leading to orderRecord getting updated as part
+         * of
+         * paymentRepository.save(payment) itself, leading to
+         * orderRepository.save(orderRecord)
+         * not getting executed at all
+         */
         payment = paymentRepository.save(payment);
         orderRecord = orderRepository.save(orderRecord);
 

@@ -1,0 +1,66 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/orders"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Idempotency-Key
+      value: "{{$guid}}"
+      description: Optional idempotency key to prevent duplicate order creation
+  body:
+    type: json
+    content: |-
+      {
+        "amount": {
+          "amountUnits": 50000,
+          "currency": "INR"
+        },
+        "receipt": "order_receipt_00",
+        "notes": {
+          "purpose": "Product purchase"
+        },
+        "customer": {
+          "name": "John Doe",
+          "phone": "9876543210",
+          "email": "john@example.com"
+        }
+      }
+response:
+  statusCode: 201
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "1"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    content-length: "392"
+    date: Fri, 25 Sep 2026 04:11:38 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "orderId": "feade18f-a510-429a-89fe-6b30272e9aef",
+        "merchantId": "a2f8f4aa-7919-4810-b42a-0bb8c0ceede9",
+        "customerId": "25eecfac-b196-4d95-9ca0-49366ee43c37",
+        "notes": {
+          "purpose": "Product purchase"
+        },
+        "receipt": "order_receipt_00",
+        "amount": {
+          "amountUnits": 50000,
+          "currency": "INR"
+        },
+        "status": "CREATED",
+        "attempts": 0,
+        "expiresAt": "2026-09-25T04:12:38.181411800Z",
+        "createdAt": "2026-09-25T04:11:38.205424900Z"
+      }
+order: 2019062805509442

@@ -1,0 +1,30 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/auth/login"
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "email": "preetam@example.com",
+        "password": "SecurePassword123"
+      }
+response:
+  statusCode: 500
+  statusText: ""
+  headers:
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Sat, 19 Sep 2026 10:41:01 GMT
+    connection: close
+  body:
+    type: json
+    content: |-
+      {
+        "errorCode": "ERROR",
+        "errorDescription": "APPUSER not found: preetam@example.com",
+        "timeStamp": "2026-09-19T10:41:01.983305500Z"
+      }
+order: 4502960696727773

@@ -1,11 +1,15 @@
 $kind: http-request
 name: List API Keys
 method: GET
-url: '{{baseUrl}}/v1/merchants/api-keys'
+url: "{{baseUrl}}/v1/merchants/api-keys"
+auth:
+  type: inherit
+  credentials:
+    id: folder-b5254aEf89f92C48fCFcFc7E-bearer
+examples: .resources/list-api-keys.resources/examples
 order: 2000
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status is 200 OK", function () {
           pm.response.to.have.status(200);
@@ -13,3 +17,4 @@ scripts:
       pm.test("Response is an array", function () {
           pm.expect(pm.response.json()).to.be.an("array");
       });
+    language: text/javascript

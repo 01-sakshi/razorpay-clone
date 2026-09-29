@@ -1,0 +1,25 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/merchants/api-keys/revoke/:keyId"
+  method: DELETE
+  pathVariables:
+    keyId: rzp_dev_mZgx7zc8X3spbZ-roi-uc36c0gHO1ENi
+response:
+  statusCode: 200
+  statusText: ""
+  headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: text/plain;charset=UTF-8
+    content-length: "15"
+    date: Fri, 25 Sep 2026 03:05:13 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: text
+    content: Api Key revoked
+order: 1790305550618

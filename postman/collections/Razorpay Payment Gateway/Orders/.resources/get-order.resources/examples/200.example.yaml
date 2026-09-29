@@ -1,0 +1,42 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/orders/feade18f-a510-429a-89fe-6b30272e9aef"
+  method: GET
+response:
+  statusCode: 200
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "1"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Fri, 25 Sep 2026 09:07:21 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "orderId": "feade18f-a510-429a-89fe-6b30272e9aef",
+        "merchantId": "a2f8f4aa-7919-4810-b42a-0bb8c0ceede9",
+        "customerId": "25eecfac-b196-4d95-9ca0-49366ee43c37",
+        "notes": {
+          "purpose": "Product purchase"
+        },
+        "receipt": "order_receipt_00",
+        "amount": {
+          "amountUnits": 50000,
+          "currency": "INR"
+        },
+        "status": "CREATED",
+        "attempts": 0,
+        "expiresAt": "2026-09-25T04:12:38.181412Z",
+        "createdAt": "2026-09-25T04:11:38.205425Z"
+      }
+order: 3315776062369478

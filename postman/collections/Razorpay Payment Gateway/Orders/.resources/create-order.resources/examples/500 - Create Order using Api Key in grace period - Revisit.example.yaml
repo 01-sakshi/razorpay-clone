@@ -1,0 +1,51 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/orders"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Idempotency-Key
+      value: "{{$guid}}"
+      description: Optional idempotency key to prevent duplicate order creation
+  body:
+    type: json
+    content: |-
+      {
+        "amount": {
+          "amountUnits": 50000,
+          "currency": "INR"
+        },
+        "receipt": "order_receipt_00",
+        "notes": {
+          "purpose": "Product purchase"
+        },
+        "customer": {
+          "name": "John Doe",
+          "phone": "9876543210",
+          "email": "john@example.com"
+        }
+      }
+response:
+  statusCode: 500
+  statusText: ""
+  headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Fri, 25 Sep 2026 03:24:11 GMT
+    connection: close
+  body:
+    type: json
+    content: |-
+      {
+        "errorCode": "ERROR",
+        "errorDescription": "Invalid or missing API Key",
+        "timeStamp": "2026-09-25T03:24:11.315990400Z"
+      }
+order: 1790306779295

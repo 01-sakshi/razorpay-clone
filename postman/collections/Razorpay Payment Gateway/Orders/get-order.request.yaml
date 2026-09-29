@@ -1,15 +1,15 @@
 $kind: http-request
 name: Get Order
 method: GET
-url: '{{baseUrl}}/v1/orders/:orderId'
+url: "{{baseUrl}}/v1/orders/feade18f-a510-429a-89fe-6b30272e9aef"
+auth:
+  type: inherit
+  credentials:
+    id: folder-beCC7bBD9Db4a45df2cBCed5-basic
+examples: .resources/get-order.resources/examples
 order: 2000
-pathVariables:
-  - key: orderId
-    value: '{{orderId}}'
-    description: UUID of the order
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status is 200 OK", function () {
           pm.response.to.have.status(200);
@@ -20,3 +20,4 @@ scripts:
           pm.expect(json).to.have.property("status");
           pm.expect(json).to.have.property("amount");
       });
+    language: text/javascript

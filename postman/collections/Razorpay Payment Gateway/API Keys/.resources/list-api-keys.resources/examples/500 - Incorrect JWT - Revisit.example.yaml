@@ -1,0 +1,27 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/merchants/api-keys"
+  method: GET
+response:
+  statusCode: 500
+  statusText: ""
+  headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Sat, 19 Sep 2026 10:57:51 GMT
+    connection: close
+  body:
+    type: json
+    content: |-
+      {
+        "errorCode": "ERROR",
+        "errorDescription": "Malformed protected header JSON: Unable to deserialize: Illegal character ((CTRL-CHAR, code 5)): only regular white space (\\r, \\n, \\t) is allowed between tokens\n at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 2]",
+        "timeStamp": "2026-09-19T10:57:51.559856400Z"
+      }
+order: 3096869686123756

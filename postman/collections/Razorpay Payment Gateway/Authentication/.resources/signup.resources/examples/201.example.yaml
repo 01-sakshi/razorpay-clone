@@ -1,0 +1,37 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/auth/signup"
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "name": "Sakshi Aggarwal",
+        "email": "sakshi@example.com",
+        "password": "SecurePassword123",
+        "businessName": "Sakshi Stores",
+        "businessType": "PROPRIETORSHIP"
+      }
+response:
+  statusCode: 201
+  statusText: ""
+  headers:
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Sat, 19 Sep 2026 10:19:12 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "id": "a2f8f4aa-7919-4810-b42a-0bb8c0ceede9",
+        "name": "Sakshi Aggarwal",
+        "email": "sakshi@example.com",
+        "businessName": "Sakshi Stores",
+        "businessType": "PROPRIETORSHIP",
+        "merchantStatus": "PENDING_KYC"
+      }
+order: 1789813890257

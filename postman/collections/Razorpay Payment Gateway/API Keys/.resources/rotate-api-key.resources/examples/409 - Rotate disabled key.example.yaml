@@ -1,0 +1,31 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/merchants/api-keys/rotate/:keyId"
+  method: POST
+  pathVariables:
+    keyId: rzp_dev_mZgx7zc8X3spbZ-roi-uc36c0gHO1ENi
+response:
+  statusCode: 409
+  statusText: ""
+  headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Fri, 25 Sep 2026 03:07:58 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "errorCode": "APIKEY_DISABLED",
+        "errorDescription": "Cannot rotate a disabled API Key",
+        "identifier": "rzp_dev_mZgx7zc8X3spbZ-roi-uc36c0gHO1ENi",
+        "timeStamp": "2026-09-25T03:07:58.959696300Z"
+      }
+order: 1790305687382

@@ -1,0 +1,48 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/payments"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Idempotency-Key
+      value: "{{$guid}}"
+      description: Optional idempotency key to prevent duplicate payment initiation
+  body:
+    type: json
+    content: |-
+      {
+        "orderId": "2540aac5-7ae4-417a-b2c7-cc28432dc00f",
+        "paymentMethod": "NETBANKING",
+        "methodDetails": {
+          "bankCode": "HDFC"
+        }
+      }
+response:
+  statusCode: 409
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "1"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    content-length: "202"
+    date: Tue, 29 Sep 2026 16:25:02 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "resource": "ORDER",
+        "identifier": "2540aac5-7ae4-417a-b2c7-cc28432dc00f",
+        "errorCode": "ORDER_NOT_PAYABLE",
+        "errorDescription": "Order is not in a payable state",
+        "timeStamp": "2026-09-29T16:25:02.659376900Z"
+      }
+order: 4140639481676715

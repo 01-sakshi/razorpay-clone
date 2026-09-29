@@ -1,0 +1,34 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/auth/signup"
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "name": "Sakshi Aggarwal",
+        "email": "sakshi@example.com",
+        "password": "SecurePassword123",
+        "businessName": "Sakshi Stores",
+        "businessType": "PROPRIETORSHIP"
+      }
+response:
+  statusCode: 409
+  statusText: ""
+  headers:
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Sat, 19 Sep 2026 10:34:01 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "errorCode": "DUPLICATE_MERCHANT_EMAIL",
+        "errorDescription": "Merchant already exists with email :sakshi@example.com",
+        "timeStamp": "2026-09-19T10:34:01.405942600Z"
+      }
+order: 1081422749645269

@@ -36,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             /* We didn't receive JWT token as part of authorizationHeader in the API */
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer")) {
+                log.warn("JWT token is missing in the request header for the request: " + request.getRequestURI());
                 /* Pass the request to the next security filter since this filter is not applicable for the request */
                 filterChain.doFilter(request, response);
                 return;

@@ -2,12 +2,15 @@ $kind: http-request
 name: Create Order
 method: POST
 url: "{{baseUrl}}/v1/orders"
+examples: .resources/create-order.resources/examples
 order: 1000
 headers:
   - key: Content-Type
     value: application/json
+    disabled: false
   - key: X-Idempotency-Key
-    value: "{{$guid}}"
+    value: feade18f-a510-429a-89fe-6b30272e9aep
+    disabled: true
     description: Optional idempotency key to prevent duplicate order creation
 body:
   type: json
@@ -17,7 +20,7 @@ body:
         "amountUnits": 50000,
         "currency": "INR"
       },
-      "receipt": "order_receipt_001",
+      "receipt": "order_receipt_027",
       "notes": {
         "purpose": "Product purchase"
       },

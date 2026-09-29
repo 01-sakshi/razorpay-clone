@@ -1,0 +1,29 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/auth/login"
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "email": "sakshi@example.com",
+        "password": "SecurePassword123"
+      }
+response:
+  statusCode: 200
+  statusText: ""
+  headers:
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Sat, 19 Sep 2026 10:40:43 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWtzaGlAZXhhbXBsZS5jb20iLCJpYXQiOjE3ODk4MTQ0NDMsIm1lcmNoYW50X2lkIjoiYTJmOGY0YWEtNzkxOS00ODEwLWI0MmEtMGJiOGMwY2VlZGU5Iiwicm9sZSI6Ik9XTkVSIiwiZXhwIjoxNzg5ODIwNDQzfQ.B2V1DETmV4TmQ2USAPgwzIoufzZueJd5_he6plrR-sw"
+      }
+order: 1789814445823

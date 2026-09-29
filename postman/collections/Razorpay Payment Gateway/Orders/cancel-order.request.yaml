@@ -1,16 +1,13 @@
 $kind: http-request
 name: Cancel Order
 method: POST
-url: '{{baseUrl}}/v1/orders/cancel/:orderId'
+url: "{{baseUrl}}/v1/orders/cancel/6b26c5a7-0a3f-4d83-b8ff-fce5024b06a6"
+examples: .resources/cancel-order.resources/examples
 order: 3000
-pathVariables:
-  - key: orderId
-    value: '{{orderId}}'
-    description: UUID of the order to cancel
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status is 200 OK", function () {
           pm.response.to.have.status(200);
       });
+    language: text/javascript

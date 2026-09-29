@@ -31,21 +31,21 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleApiKeyDisabledException(ApiKeyDisabledException e) {
         String errorCode = e.getResource().toUpperCase() + "_DISABLED";
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                ErrorResponse.of(errorCode, e.getMessage(), (String) e.getIdentifier(), null)
+                ErrorResponse.of(errorCode, e.getMessage(), (String) e.getIdentifier(), null, e.getResource())
         );
     }
 
     @ExceptionHandler(BusinessRuleViolationException.class)
     public ResponseEntity<ErrorResponse> handleBusinessRuleViolationException(BusinessRuleViolationException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                ErrorResponse.of(e.getErrorCode(), e.getMessage(), (String) e.getIdentifier(), null)
+                ErrorResponse.of(e.getErrorCode(), e.getErrorMessage(), e.getIdentifier().toString(), null, e.getResource())
         );
     }
 
     @ExceptionHandler(InvalidStateTransitionException.class)
     public ResponseEntity<ErrorResponse> handleInvalidStateTransitionException(InvalidStateTransitionException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-                ErrorResponse.of("", e.getMessage())
+                ErrorResponse.of("INVALID_STATE_TRANSITION", e.getMessage())
         );
     }
 

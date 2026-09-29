@@ -1,0 +1,58 @@
+$kind: http-example
+name: 201 - UPI Payment Attempt Failed
+request:
+  url: "{{baseUrl}}/v1/payments"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Idempotency-Key
+      value: "{{$guid}}"
+      description: Optional idempotency key to prevent duplicate payment initiation
+  body:
+    type: json
+    content: |-
+      {
+        "orderId": "2fc62f38-12e5-471c-aaba-f084d9d106f4",
+        "paymentMethod": "UPI",
+        "methodDetails": {
+          "vpa": "fail@okaxis"
+        }
+      }
+response:
+  statusCode: 201
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "1"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    content-length: "343"
+    date: Sat, 26 Sep 2026 04:08:46 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "id": "5449b2df-f51c-40f6-9998-53eb55162ee8",
+        "merchantId": "a2f8f4aa-7919-4810-b42a-0bb8c0ceede9",
+        "orderId": "2fc62f38-12e5-471c-aaba-f084d9d106f4",
+        "status": "FAILED",
+        "amount": {
+          "amountUnits": 50000,
+          "currency": "INR"
+        },
+        "method": "UPI",
+        "methodDetails": {
+          "vpa": "fail@okaxis"
+        },
+        "errorCode": "UPI_REJECTED",
+        "errorDescription": "Bank rejected the transaction"
+      }
+order: 2615578050892848

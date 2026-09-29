@@ -7,7 +7,7 @@ public class InvalidStateTransitionException extends RuntimeException {
 
 
     public InvalidStateTransitionException(String fromState, String event) {
-        super("Transition from : " + fromState + " via event: " + event + " not allowed");
+        super("Transition from : " + fromState + " state via event: " + event + " not allowed");
         this.fromState = fromState;
         this.event = event;
     }

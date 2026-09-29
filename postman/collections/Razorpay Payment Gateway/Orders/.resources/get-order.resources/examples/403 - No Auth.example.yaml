@@ -1,0 +1,33 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/orders/:orderId"
+  method: GET
+  pathVariables:
+    - key: orderId
+      value: "{{orderId}}"
+      description: UUID of the order
+response:
+  statusCode: 403
+  statusText: ""
+  headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Fri, 25 Sep 2026 02:51:38 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "timestamp": "2026-09-25T02:51:38.869Z",
+        "status": 403,
+        "error": "Forbidden",
+        "path": "/v1/orders/1234"
+      }
+order: 2804017608171646

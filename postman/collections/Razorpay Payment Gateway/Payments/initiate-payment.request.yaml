@@ -1,28 +1,27 @@
 $kind: http-request
 name: Initiate Payment
 method: POST
-url: '{{baseUrl}}/v1/payments'
+url: "{{baseUrl}}/v1/payments"
+examples: .resources/initiate-payment.resources/examples
 order: 1000
 headers:
   - key: Content-Type
     value: application/json
   - key: X-Idempotency-Key
-    value: '{{$guid}}'
+    value: "{{$guid}}"
     description: Optional idempotency key to prevent duplicate payment initiation
 body:
   type: json
   content: |-
     {
-      "orderId": "{{orderId}}",
-      "paymentMethod": "CARD",
+      "orderId": "order-unknown-100",
+      "paymentMethod": "NETBANKING",
       "methodDetails": {
-        "cardToken": "tok_abc123xyz",
-        "cvv": "123"
+        "bankCode": "HDFC"
       }
     }
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status is 201 Created", function () {
           pm.response.to.have.status(201);
@@ -34,3 +33,4 @@ scripts:
           pm.expect(json).to.have.property("method");
           pm.collectionVariables.set("paymentId", json.id);
       });
+    language: text/javascript

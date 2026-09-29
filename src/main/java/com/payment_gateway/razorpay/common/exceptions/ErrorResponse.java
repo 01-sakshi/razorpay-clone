@@ -7,9 +7,10 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ErrorResponse(
+        String resource,
+        String identifier,
         String errorCode,
         String errorDescription,
-        String identifier,
         List<FieldError> fieldErrors,
         Instant timeStamp
 ) {
@@ -20,14 +21,14 @@ public record ErrorResponse(
     }
 
     public static ErrorResponse of(String errorCode, String message) {
-        return new ErrorResponse(errorCode, message, null, null, Instant.now());
+        return new ErrorResponse(null, null, errorCode, message, null, Instant.now());
     }
 
     public static ErrorResponse of(String errorCode, String message, List<FieldError> fieldErrors) {
-        return new ErrorResponse(errorCode, message,null, fieldErrors, Instant.now());
+        return new ErrorResponse(null, null, errorCode, message, fieldErrors, Instant.now());
     }
 
-    public static ErrorResponse of(String errorCode, String message, String identifier, List<FieldError> fieldErrors) {
-        return new ErrorResponse(errorCode, message, identifier, fieldErrors, Instant.now());
+    public static ErrorResponse of(String errorCode, String message, String identifier, List<FieldError> fieldErrors, String resource) {
+        return new ErrorResponse(resource, identifier, errorCode, message, fieldErrors, Instant.now());
     }
 }

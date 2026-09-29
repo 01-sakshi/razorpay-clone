@@ -1,0 +1,51 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/payments"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Idempotency-Key
+      value: "{{$guid}}"
+      description: Optional idempotency key to prevent duplicate payment initiation
+  body:
+    type: json
+    content: |-
+      {
+        "orderId": "a9eb6d65-9e74-4c52-b93c-c6f4b5946d30",
+        "paymentMethod": "CARD"
+      }
+response:
+  statusCode: 201
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "0"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    content-length: "447"
+    date: Tue, 29 Sep 2026 12:01:26 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "id": "73b2caa3-abcb-4b61-a75d-cad97cd18560",
+        "merchantId": "a2f8f4aa-7919-4810-b42a-0bb8c0ceede9",
+        "orderId": "a9eb6d65-9e74-4c52-b93c-c6f4b5946d30",
+        "status": "FAILED",
+        "amount": {
+          "amountUnits": 50000,
+          "currency": "INR"
+        },
+        "method": "CARD",
+        "errorCode": "CARD_PAYMENT_FAILED",
+        "errorDescription": "Cannot invoke \"java.util.Map.get(Object)\" because the return value of \"com.payment_gateway.razorpay.payment.gateway.dto.PaymentRequest.methodDetails()\" is null"
+      }
+order: 4406223130430572

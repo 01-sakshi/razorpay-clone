@@ -1,15 +1,11 @@
 $kind: http-request
 name: Capture Payment
 method: POST
-url: '{{baseUrl}}/v1/payments/capture/:paymentId'
+url: "{{baseUrl}}/v1/payments/capture/3e9bed30-4f0e-4cbd-a0a9-4fc07b7686ef"
+examples: .resources/capture-payment.resources/examples
 order: 2000
-pathVariables:
-  - key: paymentId
-    value: '{{paymentId}}'
-    description: UUID of the payment to capture
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status is 200 OK", function () {
           pm.response.to.have.status(200);
@@ -19,3 +15,4 @@ scripts:
           pm.expect(json).to.have.property("id");
           pm.expect(json).to.have.property("status");
       });
+    language: text/javascript

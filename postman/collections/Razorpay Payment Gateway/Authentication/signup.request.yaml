@@ -1,24 +1,23 @@
 $kind: http-request
 name: Sign Up
 method: POST
-url: '{{baseUrl}}/v1/auth/signup'
+url: "{{baseUrl}}/v1/auth/signup"
+examples: .resources/signup.resources/examples
 order: 1000
 headers:
-  - key: Content-Type
-    value: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-
     {
       "name": "Sakshi Aggarwal",
       "email": "sakshi@example.com",
-      "password": "SecurePassword123",
+      "password": "password",
       "businessName": "Sakshi Stores",
       "businessType": "PROPRIETORSHIP"
     }
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status is 201 Created", function () {
           pm.response.to.have.status(201);
@@ -29,3 +28,4 @@ scripts:
           pm.expect(json).to.have.property("email");
           pm.expect(json).to.have.property("merchantStatus");
       });
+    language: text/javascript

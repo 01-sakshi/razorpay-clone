@@ -1,0 +1,55 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/payments"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Idempotency-Key
+      value: "{{$guid}}"
+      description: Optional idempotency key to prevent duplicate payment initiation
+  body:
+    type: json
+    content: |-
+      {
+        "orderId": "2540aac5-7ae4-417a-b2c7-cc28432dc00f",
+        "paymentMethod": "UPI",
+        "methodDetails": {
+          "vpa": "success@okaxis"
+        }
+      }
+response:
+  statusCode: 201
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "0"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    content-length: "273"
+    date: Sat, 26 Sep 2026 04:10:53 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "id": "2d909d2a-6508-4203-a4f5-8126932c9303",
+        "merchantId": "a2f8f4aa-7919-4810-b42a-0bb8c0ceede9",
+        "orderId": "2540aac5-7ae4-417a-b2c7-cc28432dc00f",
+        "status": "AUTHORIZING",
+        "amount": {
+          "amountUnits": 50000,
+          "currency": "INR"
+        },
+        "method": "UPI",
+        "methodDetails": {
+          "vpa": "success@okaxis"
+        }
+      }
+order: 3897875212242193

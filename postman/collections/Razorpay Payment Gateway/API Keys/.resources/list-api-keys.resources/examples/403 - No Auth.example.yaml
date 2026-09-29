@@ -1,0 +1,29 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/merchants/api-keys"
+  method: GET
+response:
+  statusCode: 403
+  statusText: ""
+  headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Sat, 19 Sep 2026 10:46:13 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "timestamp": "2026-09-19T10:46:13.757Z",
+        "status": 403,
+        "error": "Forbidden",
+        "path": "/v1/merchants/api-keys"
+      }
+order: 1789814806730

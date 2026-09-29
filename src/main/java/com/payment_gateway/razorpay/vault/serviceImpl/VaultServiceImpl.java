@@ -41,7 +41,7 @@ public class VaultServiceImpl implements VaultService {
     @Transactional
     public TokenizeResponse tokenize(TokenizeRequest tokenizeRequest, UUID merchantId) {
         String lastFour = tokenizeRequest.pan().substring(tokenizeRequest.pan().length() - 4);
-        String bin = tokenizeRequest.pan().substring(0, 6); //First six digits of PAN
+        String bin = tokenizeRequest.pan().substring(0, 6); // First six digits of PAN
         CardBrand cardBrand = detectBrand(bin);
         byte[] dek = KeyGenerators.secureRandom(32).generateKey();
         byte[] encryptedPan = VaultServiceConfig.panEncryptor(dek)
@@ -82,17 +82,17 @@ public class VaultServiceImpl implements VaultService {
 
     @Override
     @Transactional
-    public PaymentProcessorResponse charge(UUID paymentId, String token, Money amount, Map<String, Object> methodDetails) {
-        CardToken cardToken = cardTokenRepository.findByTokenAndRevokedAtNull(token)
-                .orElseThrow(() -> new ResourceNotFoundException("CardToken", token));
-
-        VaultCard vaultCard = cardToken.getVaultCard();
+    public PaymentProcessorResponse charge(UUID paymentId, String token, Money amount,
+            Map<String, Object> methodDetails) {
         byte[] decryptedPanBytes = null;
-
         try {
+            CardToken cardToken = cardTokenRepository.findByTokenAndRevokedAtNull(token)
+                    .orElseThrow(() -> new ResourceNotFoundException("CardToken", token));
+
+            VaultCard vaultCard = cardToken.getVaultCard();
             byte[] encryptedDek = vaultCard.getEncryptedDek();
             byte[] decryptedDek = decEncryptor.decrypt(encryptedDek);
-            decryptedPanBytes = VaultServiceConfig.panEncryptor(decryptedDek).decrypt(vaultCard.getEncryptedDek());
+            decryptedPanBytes = VaultServiceConfig.panEncryptor(decryptedDek).decrypt(vaultCard.getEncryptedPan());
             String pan = new String(decryptedPanBytes, StandardCharsets.UTF_8);
             String expiry = vaultCard.getExpiryMonth() + "/" + vaultCard.getExpiryYear();
 
@@ -107,14 +107,18 @@ public class VaultServiceImpl implements VaultService {
             log.error("Vault charge registered, token={}****", token.substring(0, 4));
             return new PaymentProcessorResponse.Failure("VAULT_CHARGE_FAILED", e.getMessage());
         } finally {
-            if (decryptedPanBytes != null) Arrays.fill(decryptedPanBytes, (byte) 0);
+            if (decryptedPanBytes != null)
+                Arrays.fill(decryptedPanBytes, (byte) 0);
         }
     }
 
     private CardBrand detectBrand(String ch) {
-        if (ch.startsWith("4")) return CardBrand.VISA;
-        else if (ch.startsWith("5") || ch.startsWith("2")) return CardBrand.MASTERCARD;
-        else if (ch.startsWith("37") || ch.startsWith("34")) return CardBrand.AMEX;
+        if (ch.startsWith("4"))
+            return CardBrand.VISA;
+        else if (ch.startsWith("5") || ch.startsWith("2"))
+            return CardBrand.MASTERCARD;
+        else if (ch.startsWith("37") || ch.startsWith("34"))
+            return CardBrand.AMEX;
         return CardBrand.RUPAY;
     }
 }

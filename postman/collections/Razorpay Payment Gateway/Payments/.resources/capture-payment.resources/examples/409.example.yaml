@@ -1,0 +1,30 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/payments/capture/53232687-b5eb-4bb1-ae5d-be665135fe1f"
+  method: POST
+response:
+  statusCode: 403
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "0"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Tue, 29 Sep 2026 16:36:43 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "errorCode": "INVALID_STATE_TRANSITION",
+        "errorDescription": "Transition from : CAPTURED state via event: CAPTURE_REQUEST not allowed",
+        "timeStamp": "2026-09-29T16:36:43.165478Z"
+      }
+order: 1790699818700

@@ -1,0 +1,55 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/payments"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Idempotency-Key
+      value: "{{$guid}}"
+      description: Optional idempotency key to prevent duplicate payment initiation
+  body:
+    type: json
+    content: |-
+      {
+        "orderId": "eb931c02-1826-414b-8fee-65950597ccdc",
+        "paymentMethod": "NETBANKING",
+        "methodDetails": {
+          "bankCode": "HDFC"
+        }
+      }
+response:
+  statusCode: 201
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "0"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    content-length: "275"
+    date: Tue, 29 Sep 2026 12:55:37 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "id": "53232687-b5eb-4bb1-ae5d-be665135fe1f",
+        "merchantId": "a2f8f4aa-7919-4810-b42a-0bb8c0ceede9",
+        "orderId": "eb931c02-1826-414b-8fee-65950597ccdc",
+        "status": "AUTHORIZING",
+        "amount": {
+          "amountUnits": 50000,
+          "currency": "INR"
+        },
+        "method": "NETBANKING",
+        "methodDetails": {
+          "bankCode": "HDFC"
+        }
+      }
+order: 4174155740018754

@@ -30,7 +30,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)     /* For GET queries, readOnly=true will not lock the connection */
+@Transactional(readOnly = true) /* For GET queries, readOnly=true will not lock the connection */
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
@@ -53,7 +53,8 @@ public class OrderServiceImpl implements OrderService {
         UUID customerId = null;
         CreateOrderRequest.CustomerDetails customer = createOrderRequest.customer();
         if (customer != null) {
-            //Meaning, the order request is from an active customer account, not a guest one.
+            // Meaning, the order request is from an active customer account, not a guest
+            // one.
             customerId = customerService.findOrCreate(merchantId, customer.name(), customer.phone(), customer.email());
         }
 
@@ -100,8 +101,10 @@ public class OrderServiceImpl implements OrderService {
     public String cancel(UUID merchantId, UUID orderId) {
         return orderRepository.findByIdAndMerchant(orderId, merchantId)
                 .map(orderRecord -> {
-                    if (orderRecord.getStatus().equals(OrderStatus.CANCELLED) || orderRecord.getStatus().equals(OrderStatus.PAID))
-                        throw new BusinessRuleViolationException("ORDER_CANNOT_CANCEL", "Order", orderId);
+                    if (orderRecord.getStatus().equals(OrderStatus.CANCELLED)
+                            || orderRecord.getStatus().equals(OrderStatus.PAID))
+                        throw new BusinessRuleViolationException("ORDER_CANNOT_CANCEL",
+                                "Order is already cancelled/paid", "ORDER", orderId);
                     orderRecord.setStatus(OrderStatus.CANCELLED);
                     orderRecord.setUpdatedAt(Instant.now());
                     orderRepository.save(orderRecord);
@@ -113,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
                                     "amountUnits", orderRecord.getAmount().getAmountUnits(),
                                     "amountCurrency", orderRecord.getAmount().getCurrency()));
 
-                    return "Order with orderId:" + orderId + "Cancelled Successfully";
+                    return "Order with orderId : " + orderId + " Cancelled Successfully";
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("order", orderId));
     }

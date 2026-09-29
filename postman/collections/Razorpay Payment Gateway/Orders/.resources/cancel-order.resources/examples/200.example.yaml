@@ -1,0 +1,25 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/orders/cancel/6b26c5a7-0a3f-4d83-b8ff-fce5024b06a6"
+  method: POST
+response:
+  statusCode: 200
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "1"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: text/plain;charset=UTF-8
+    content-length: "77"
+    date: Fri, 25 Sep 2026 09:29:41 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: text
+    content: Order with orderId:6b26c5a7-0a3f-4d83-b8ff-fce5024b06a6Cancelled Successfully
+order: 1790328639725

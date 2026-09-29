@@ -1,0 +1,49 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/vault/tokenize"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Idempotency-Key
+      value: "{{$guid}}"
+      description: Optional idempotency key to prevent duplicate tokenization
+  body:
+    type: json
+    content: |-
+      {
+        "customerId": "25eecfac-b196-4d95-9ca0-49366ee43c37",
+        "pan": "4111111111111111",
+        "expiryMonth": 12,
+        "expiryYear": 2027,
+        "cvv": "123",
+        "cardHolderName": "John Doe"
+      }
+response:
+  statusCode: 200
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "1"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    content-length: "131"
+    date: Fri, 25 Sep 2026 12:59:36 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "token": "tok_3p1Tvalv5K6Mp9rr7vE76_Wx-Ct9_oxC6e_jc05BOeQ",
+        "expiryMonth": 12,
+        "expiryYear": 2027,
+        "cardBrand": "VISA",
+        "lastFour": "1111"
+      }
+order: 2177264749517187

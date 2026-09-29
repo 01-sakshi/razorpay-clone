@@ -1,0 +1,31 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/merchants/api-keys/rotate/:keyId"
+  method: POST
+  pathVariables:
+    keyId: rzp_dev_6up139YYjqWMBu7WaUb9lOf5lt92Wad3
+response:
+  statusCode: 201
+  statusText: ""
+  headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Fri, 25 Sep 2026 03:15:14 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "id": "38c44532-493a-4b8c-b9db-568bf2aa2d2a",
+        "keyId": "rzp_dev_6up139YYjqWMBu7WaUb9lOf5lt92Wad3",
+        "keySecret": "$2a$10$wHrw3tWjS1F5UJT607.tSeDWHvxqhnLCIKZU1QTyu6/yfKINvzqoW",
+        "environment": "DEV"
+      }
+order: 4104150177854501

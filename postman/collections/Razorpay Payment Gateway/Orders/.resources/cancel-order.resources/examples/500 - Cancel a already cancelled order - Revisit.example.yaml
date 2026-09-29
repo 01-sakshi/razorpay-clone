@@ -1,0 +1,29 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/orders/cancel/6b26c5a7-0a3f-4d83-b8ff-fce5024b06a6"
+  method: POST
+response:
+  statusCode: 500
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "1"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Fri, 25 Sep 2026 09:31:33 GMT
+    connection: close
+  body:
+    type: json
+    content: |-
+      {
+        "errorCode": "ERROR",
+        "errorDescription": "Request processing failed: com.payment_gateway.razorpay.common.exceptions.BusinessRuleViolationException: Order with orderId: 6b26c5a7-0a3f-4d83-b8ff-fce5024b06a6 is already cancelled",
+        "timeStamp": "2026-09-25T09:31:33.824404600Z"
+      }
+order: 3451161008801614

@@ -1,21 +1,20 @@
 $kind: http-request
 name: Login
 method: POST
-url: '{{baseUrl}}/v1/auth/login'
+url: "{{baseUrl}}/v1/auth/login"
+examples: .resources/login.resources/examples
 order: 2000
 headers:
-  - key: Content-Type
-    value: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-
     {
-      "email": "sakshi@example.com",
+      "email": "preetam@example.com",
       "password": "SecurePassword123"
     }
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status is 200 OK", function () {
           pm.response.to.have.status(200);
@@ -25,3 +24,4 @@ scripts:
           pm.expect(json).to.have.property("accessToken");
           pm.collectionVariables.set("jwtToken", json.accessToken);
       });
+    language: text/javascript

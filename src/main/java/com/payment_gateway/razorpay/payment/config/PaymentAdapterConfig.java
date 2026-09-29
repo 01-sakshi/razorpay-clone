@@ -23,8 +23,8 @@ public class PaymentAdapterConfig {
     public Map<PaymentMethod, PaymentAdapter> paymentAdapterMap() {
         return Map.of(
                 PaymentMethod.CARD, cardPaymentAdapter,
-                PaymentMethod.UPI, netBankingAdapter,
-                PaymentMethod.NETBANKING, upiPaymentAdapter
+                PaymentMethod.UPI, upiPaymentAdapter,
+                PaymentMethod.NETBANKING, netBankingAdapter
         );
     }
 }

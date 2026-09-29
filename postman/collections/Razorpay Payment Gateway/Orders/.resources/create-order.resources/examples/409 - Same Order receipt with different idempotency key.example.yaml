@@ -1,0 +1,56 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/orders"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+      disabled: false
+    - key: X-Idempotency-Key
+      value: feade18f-a510-429a-89fe-6b30272e9aep
+      disabled: false
+      description: Optional idempotency key to prevent duplicate order creation
+  body:
+    type: json
+    content: |-
+      {
+        "amount": {
+          "amountUnits": 50000,
+          "currency": "INR"
+        },
+        "receipt": "order_receipt_005",
+        "notes": {
+          "purpose": "Product purchase"
+        },
+        "customer": {
+          "name": "John Doe",
+          "phone": "9876543210",
+          "email": "john@example.com"
+        }
+      }
+response:
+  statusCode: 409
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "1"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    content-length: "126"
+    date: Fri, 25 Sep 2026 09:23:25 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "errorCode": "ORDER_RECEIPT_DUPLICATE",
+        "errorDescription": "Order already exists",
+        "timeStamp": "2026-09-25T09:23:25.536535800Z"
+      }
+order: 2582754105705953

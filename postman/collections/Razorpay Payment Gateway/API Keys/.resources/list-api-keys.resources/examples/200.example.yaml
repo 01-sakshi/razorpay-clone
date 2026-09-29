@@ -1,0 +1,33 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/merchants/api-keys"
+  method: GET
+response:
+  statusCode: 200
+  statusText: ""
+  headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Sat, 19 Sep 2026 11:17:36 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      [
+        {
+          "id": "99cf7369-e9f0-44eb-be81-9288413c0901",
+          "keyId": "rzp_dev_mZgx7zc8X3spbZ-roi-uc36c0gHO1ENi",
+          "environment": "DEV",
+          "enabled": true,
+          "lastUsedAt": null,
+          "createdAt": "2026-09-19T11:16:43.131987Z"
+        }
+      ]
+order: 3567215310608526

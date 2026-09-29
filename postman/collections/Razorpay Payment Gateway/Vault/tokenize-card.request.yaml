@@ -1,20 +1,21 @@
 $kind: http-request
 name: Tokenize Card
 method: POST
-url: '{{baseUrl}}/v1/vault/tokenize'
+url: "{{baseUrl}}/v1/vault/tokenize"
+examples: .resources/tokenize-card.resources/examples
 order: 1000
 headers:
   - key: Content-Type
     value: application/json
   - key: X-Idempotency-Key
-    value: '{{$guid}}'
+    value: "{{$guid}}"
     description: Optional idempotency key to prevent duplicate tokenization
 body:
   type: json
   content: |-
     {
-      "customerId": "{{customerId}}",
-      "pan": "4111111111111111",
+      "customerId": "25eecfac-b196-4d95-9ca0-49366ee43c37",
+      "pan": "378282246310005",
       "expiryMonth": 12,
       "expiryYear": 2027,
       "cvv": "123",
@@ -22,7 +23,6 @@ body:
     }
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status is 200 OK", function () {
           pm.response.to.have.status(200);
@@ -34,3 +34,4 @@ scripts:
           pm.expect(json).to.have.property("cardBrand");
           pm.collectionVariables.set("cardToken", json.token);
       });
+    language: text/javascript

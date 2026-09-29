@@ -1,14 +1,15 @@
 $kind: http-request
 name: Rotate API Key
 method: POST
-url: '{{baseUrl}}/v1/merchants/api-keys/rotate/:keyId'
+url: "{{baseUrl}}/v1/merchants/api-keys/rotate/:keyId"
+examples: .resources/rotate-api-key.resources/examples
 order: 4000
 pathVariables:
   - key: keyId
-    value: '{{apiKeyId}}'
+    value: rzp_dev_6up139YYjqWMBu7WaUb9lOf5lt92Wad3
+    description: ""
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status is 201 Created", function () {
           pm.response.to.have.status(201);
@@ -20,3 +21,4 @@ scripts:
           pm.collectionVariables.set("apiKeyId", json.keyId);
           pm.collectionVariables.set("apiKeySecret", json.keySecret);
       });
+    language: text/javascript

@@ -1,0 +1,57 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/payments"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Idempotency-Key
+      value: "{{$guid}}"
+      description: Optional idempotency key to prevent duplicate payment initiation
+  body:
+    type: json
+    content: |-
+      {
+        "orderId": "93e37adc-3f71-417b-bb45-78c5764e358b",
+        "paymentMethod": "NETBANKING",
+        "methodDetails": {
+          "bankCode": "BANK_CODE_FAIL"
+        }
+      }
+response:
+  statusCode: 201
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "0"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    content-length: "359"
+    date: Tue, 29 Sep 2026 13:05:00 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "id": "3e9bed30-4f0e-4cbd-a0a9-4fc07b7686ef",
+        "merchantId": "a2f8f4aa-7919-4810-b42a-0bb8c0ceede9",
+        "orderId": "93e37adc-3f71-417b-bb45-78c5764e358b",
+        "status": "FAILED",
+        "amount": {
+          "amountUnits": 50000,
+          "currency": "INR"
+        },
+        "method": "NETBANKING",
+        "methodDetails": {
+          "bankCode": "BANK_CODE_FAIL"
+        },
+        "errorCode": "BANK_REJECTED",
+        "errorDescription": "Bank rejected the transaction"
+      }
+order: 4227711411457323
