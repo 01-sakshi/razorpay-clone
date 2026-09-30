@@ -52,7 +52,7 @@ payment:
     default-order-expiry-seconds: 60
   simulator:
     poll-interval-ms: 5000
-    chaos-mode: TIMEOUT # NORMAL,FAILURE,SUCCESS,TIMEOUT,SLOW
+    chaos-mode: NORMAL # NORMAL,FAILURE,SUCCESS,TIMEOUT,SLOW
     methods:
       CARD:
         min-delay-seconds: 2
