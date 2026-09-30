@@ -34,6 +34,11 @@ public class IdempotencyFilter extends OncePerRequestFilter {
     private final IdempotencyStore idempotencyStore;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
+    /**
+     * Guards POST, PUT, and PATCH requests carrying an idempotency key; keys are scoped by merchant when present.
+     * Concurrent in-progress reuse conflicts, while completed non-error responses with bodies are replayed for
+     * 24 hours; failed or empty responses release the claim so the client can retry.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
@@ -94,6 +99,13 @@ public class IdempotencyFilter extends OncePerRequestFilter {
         }
     }
 
+    /**
+     * Restores the saved status and JSON body; malformed stored data is routed through the conflict handler.
+     *
+     * @param request request associated with the replay
+     * @param response response that receives the saved result
+     * @param stored serialized status and body separated by {@code |}
+     */
     private void replay(HttpServletRequest request, HttpServletResponse response, String stored) throws IOException {
         int separatorIndex = stored.indexOf(SEPARATOR);
         if (separatorIndex < 0) {

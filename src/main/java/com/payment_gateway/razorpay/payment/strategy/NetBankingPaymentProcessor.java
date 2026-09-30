@@ -11,6 +11,7 @@ import java.util.Objects;
 @Component
 public class NetBankingPaymentProcessor implements PaymentProcessor {
 
+    /** Returns {@code BANK_REJECTED} for bank code {@code BANK_CODE_FAIL}; other supplied bank codes receive a pending reference. */
     @Override
     public PaymentProcessorResponse charge(PaymentProcessorRequest request) {
         final String BANK_CODE_FAIL = "BANK_CODE_FAIL";

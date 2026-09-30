@@ -17,6 +17,7 @@ public class OutboxResultHandler {
     private final Integer MAX_ATTEMPTS = 3;
 
     /* @Transactional is not applicable for private methods */
+    /** Marks a successfully published event as complete and records its publication time. */
     @Transactional
     public void handleEventPublished(OutboxEvent event) {
         event.setStatus(OutboxStatus.PUBLISHED);
@@ -24,6 +25,7 @@ public class OutboxResultHandler {
         outboxEventRepository.save(event);
     }
 
+    /** Increments the attempt count, truncates the saved error to 1,000 characters, and marks the event failed at three attempts. */
     @Transactional
     public void handleEventFailed(OutboxEvent event, String errorMessage) {
         event.setAttempts(event.getAttempts() + 1);

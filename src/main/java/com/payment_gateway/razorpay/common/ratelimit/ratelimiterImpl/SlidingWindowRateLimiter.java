@@ -39,6 +39,16 @@ public class SlidingWindowRateLimiter implements RateLimiter {
 
     private final StringRedisTemplate redis;
 
+    /**
+     * Prunes timestamps at or before the window floor, then checks the remaining Redis sorted-set entries.
+     * At capacity it denies without recording the new request and derives retry time from the oldest entry;
+     * otherwise it adds a uniquely identified timestamp and refreshes the key TTL.
+     *
+     * @param key client or credential scope used to isolate request timestamps
+     * @param maxRequestsAllowed maximum requests permitted in the rolling window
+     * @param windowSeconds rolling-window duration
+     * @return whether this request is allowed, remaining requests, or retry delay
+     */
     @Override
     public RateLimitResult check(String key, int maxRequestsAllowed, int windowSeconds) {
         //New Request - key

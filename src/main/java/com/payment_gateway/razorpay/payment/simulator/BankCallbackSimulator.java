@@ -22,7 +22,8 @@ public class BankCallbackSimulator {
     private final PaymentService paymentService;
     private final SimulatorConfig simulatorConfig;
 
-   @Scheduled(fixedDelayString = "${payment.simulator.poll-interval-ms:5000}")
+    /** Polls payments left in {@code AUTHORIZING} for at least one second and evaluates their configured callbacks. */
+    @Scheduled(fixedDelayString = "${payment.simulator.poll-interval-ms:5000}")
     public void processCallbacks() {
         Instant globalWindow = Instant.now().minusSeconds(1);   //Take all payments in AUTHORIZING status till (current time - 1 second)
         List<Payment> candidates = paymentRepository.findByStatusAndUpdatedAtBefore(PaymentStatus.AUTHORIZING,
@@ -34,6 +35,7 @@ public class BankCallbackSimulator {
         }
     }
 
+    /** Waits until the deterministic method-specific due time, then applies the global chaos mode or success rate. */
     private void simulateCallback(Payment payment) {
         SimulatorConfig.MethodSimulatorConfig methodSimulatorConfig = simulatorConfig.configOf(payment.getMethod());
 
@@ -50,6 +52,7 @@ public class BankCallbackSimulator {
         }
     }
 
+    /** Sends a generated bank reference and either approval or the configured simulated decline to payment resolution. */
     private void resolve(Payment payment, boolean approve) {
         String bank_ref = "SIM_BANK_REF" + RandomizerUtil.randomBase64(8);
         if (approve) {
@@ -60,11 +63,13 @@ public class BankCallbackSimulator {
         }
     }
 
+    /** Maps the payment UUID hash to a stable 0-99 bucket and approves when it falls below the configured percentage. */
     private boolean shouldApprove(Payment payment, SimulatorConfig.MethodSimulatorConfig methodSimulatorConfig) {
         int bucket = Math.abs(payment.getId().hashCode()) % 100;
         return methodSimulatorConfig.getSuccessRate() > bucket; //success scenario
     }
 
+    /** Derives an inclusive min/max delay from the payment UUID hash, doubles it in slow mode, and adds it to updatedAt. */
     private Instant dueAt(Payment payment, SimulatorConfig.MethodSimulatorConfig methodSimulatorConfig) {
         int range = methodSimulatorConfig.getMaxDelaySeconds() - methodSimulatorConfig.getMinDelaySeconds();
         int delaySeconds = methodSimulatorConfig.getMinDelaySeconds() + (Math.abs(payment.getId().hashCode()) % (range + 1));

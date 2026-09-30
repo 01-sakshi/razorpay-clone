@@ -58,6 +58,15 @@ public class TokenBucketRateLimiter implements RateLimiter {
 
     private final StringRedisTemplate redis;
 
+    /**
+     * Atomically refills a Redis token bucket at {@code maxRequestsAllowed / windowSeconds} tokens per second,
+     * consumes one token when available, and computes the wait for the next token when empty. Redis failures fail open.
+     *
+     * @param key client or credential scope used to isolate bucket state
+     * @param maxRequestsAllowed bucket capacity and request allowance per window
+     * @param windowSeconds interval used to derive the refill rate
+     * @return whether a token was consumed, remaining whole tokens, or retry delay
+     */
     @Override
     public RateLimitResult check(String key, int maxRequestsAllowed, int windowSeconds) {
         try {

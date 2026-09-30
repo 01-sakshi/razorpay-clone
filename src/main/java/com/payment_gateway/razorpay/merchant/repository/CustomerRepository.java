@@ -9,5 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, UUID> {
+    /** Finds a customer only within the merchant/email pair, allowing identical emails in different merchant accounts. */
     Optional<Customer> findByEmailAndMerchantId(String email, UUID merchantId);
 }

@@ -7,5 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface AppUserRepository extends JpaRepository<AppUser, UUID> {
+    /** Resolves the globally unique login account by email, including its stored password hash and role. */
     Optional<AppUser> findByEmail(String username);
 }

@@ -9,8 +9,10 @@ import java.util.UUID;
 
 public interface MerchantRepository extends JpaRepository<Merchant, UUID> {
 
+    /** Looks up the merchant whose globally unique signup email matches the supplied value. */
     Merchant findByEmail(String email);
 
+    /** Selects only merchant IDs for the requested status, avoiding loading full merchant entities for batch work. */
     List<UUID> findAllIdsByStatus(MerchantStatus active);
 
 }

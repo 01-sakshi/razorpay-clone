@@ -17,6 +17,13 @@ public class RedisIdempotencyStore implements IdempotencyStore {
     private final StringRedisTemplate redis;
     String prefix = "idempotency:";
 
+    /**
+     * Writes the serialized response to Redis with the requested TTL; Redis write failures are logged, not propagated.
+     *
+     * @param key idempotency key
+     * @param value serialized response
+     * @param ttl retention period
+     */
     @Override
     public void store(String key, String value, Duration ttl) {
         try {
@@ -26,6 +33,13 @@ public class RedisIdempotencyStore implements IdempotencyStore {
         }
     }
 
+    /**
+     * Uses Redis set-if-absent to claim a key; on Redis failure this implementation fails open and permits processing.
+     *
+     * @param key idempotency key
+     * @param ttl claim retention period
+     * @return {@code true} when the key was claimed or Redis was unavailable, otherwise {@code false}
+     */
     @Override
     public boolean setIfAbsent(String key, Duration ttl) {
         try {
@@ -36,6 +50,11 @@ public class RedisIdempotencyStore implements IdempotencyStore {
         }
     }
 
+    /**
+     * Deletes the namespaced Redis key; a Redis deletion failure is logged and swallowed.
+     *
+     * @param key idempotency key
+     */
     @Override
     public void delete(String key) {
         try {
@@ -45,6 +64,12 @@ public class RedisIdempotencyStore implements IdempotencyStore {
         }
     }
 
+    /**
+     * Reads the namespaced Redis value, returning empty both when absent and when Redis cannot be read.
+     *
+     * @param key idempotency key
+     * @return stored value, or empty when absent or unavailable
+     */
     @Override
     public Optional<String> get(String key) {
         try {

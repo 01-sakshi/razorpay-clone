@@ -28,6 +28,14 @@ public class MerchantLookupServiceImpl implements MerchantLookupService {
     private final MerchantRepository merchantRepository;
     private final BytesEncryptor bytesEncryptor;
 
+    /**
+     * Loads enabled configurations for the merchant, filters by subscription, and decrypts each matching secret
+     * for webhook signing. A decryption failure prevents the lookup from returning a partial target list.
+    *
+    * @param merchantId merchant whose enabled configurations are queried
+    * @param eventType event type to match
+    * @return matching webhook targets, possibly empty
+     */
     @Override
     public List<WebhookTarget> getActiveConfigsForEvent(UUID merchantId, String eventType) {
 
@@ -42,6 +50,11 @@ public class MerchantLookupServiceImpl implements MerchantLookupService {
                 .toList();
     }
 
+    /**
+     * Fetches only merchant IDs with {@link MerchantStatus#ACTIVE} status for platform processing.
+     *
+     * @return active merchant identifiers, possibly empty
+     */
     @Override
     public List<UUID> getAllActiveMerchants() {
         List<UUID> merchantIds = merchantRepository.findAllIdsByStatus(MerchantStatus.ACTIVE);
@@ -49,6 +62,13 @@ public class MerchantLookupServiceImpl implements MerchantLookupService {
         return merchantIds;
     }
 
+    /**
+     * Reads the merchant's settlement account fields without exposing the full merchant entity.
+     *
+     * @param merchantId merchant whose settlement details are requested
+     * @return the account number, IFSC, and holder name
+     * @throws ResourceNotFoundException if no merchant has the supplied ID
+     */
     @Override
     public SettlementBankDetails getSettlementBankDetails(UUID merchantId) {
         Merchant merchant = merchantRepository.findById(merchantId)

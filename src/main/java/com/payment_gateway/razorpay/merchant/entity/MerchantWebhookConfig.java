@@ -49,6 +49,12 @@ public class MerchantWebhookConfig extends BaseAuditEntity {
     @Column(nullable = false, length = 50)
     private String eventTypes;  
 
+    /**
+     * Matches a comma-separated subscription case-insensitively; a blank subscription or {@code ALL} matches every event.
+     *
+     * @param eventType event name to test
+     * @return whether this configuration should receive the event
+     */
     public boolean isSubscribedTo(String eventType) {
         if (eventTypes == null || eventTypes.isBlank()) {
             return true;

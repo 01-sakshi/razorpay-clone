@@ -19,6 +19,7 @@ public class PaymentProcessorConfig {
     private final UpiPaymentProcessor upiPaymentProcessor;
     private final NetBankingPaymentProcessor netBankingPaymentProcessor;
 
+    /** Builds the immutable method-to-processor registry used by the processor router. */
     @Bean
     public Map<PaymentMethod, PaymentProcessor> paymentProcessorMap() {
         return Map.of(PaymentMethod.CARD, cardPaymentProcessor,

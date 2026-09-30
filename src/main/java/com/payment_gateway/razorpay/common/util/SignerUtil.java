@@ -13,6 +13,14 @@ public class SignerUtil {
 
     private static final String ALGO = "HmacSHA256";
 
+    /**
+     * Computes the configured HMAC digest over the UTF-8 payload using the UTF-8 secret and returns lowercase hex.
+     *
+     * @param payload exact text to sign
+     * @param secret shared signing secret
+     * @return lowercase hexadecimal HMAC digest
+     * @throws RuntimeException if the HMAC algorithm or key cannot be initialized
+     */
     public String sign(String payload, String secret) {
         try {
             Mac mac = Mac.getInstance(ALGO);

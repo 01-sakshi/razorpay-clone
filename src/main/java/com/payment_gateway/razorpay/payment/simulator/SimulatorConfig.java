@@ -22,6 +22,7 @@ public class SimulatorConfig {
 
 
     //Hashmap(methods) is populated via application properties file
+    /** Returns the method's configured delay/success settings, or a fresh default configuration when none is present. */
     MethodSimulatorConfig configOf(PaymentMethod paymentMethod) {
         return methods.getOrDefault(paymentMethod.name(), new MethodSimulatorConfig());
     }

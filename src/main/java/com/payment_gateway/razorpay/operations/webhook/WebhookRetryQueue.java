@@ -22,18 +22,36 @@ public class WebhookRetryQueue {
 
     private final StringRedisTemplate redis;
 
+    /**
+     * Adds or reschedules the event ID in a Redis sorted set using its retry instant as the score.
+     *
+     * @param webhookEventId webhook event identifier
+     * @param retryAt next delivery time
+     */
     public void enqueue(UUID webhookEventId, Instant retryAt) {
         long time = retryAt.toEpochMilli();
         redis.opsForZSet().add(key, webhookEventId.toString(), time);
         log.info("Enqueued a webhook event with id: {}", webhookEventId);
     }
 
+    /**
+     * Adds the event ID only if absent, preserving an existing queue score during database reconciliation.
+     *
+     * @param webhookEventId webhook event identifier
+     * @param retryAt next delivery time
+     */
     public void enqueueIfAbsent(UUID webhookEventId, Instant retryAt) {
         long time = retryAt.toEpochMilli();
         redis.opsForZSet().addIfAbsent(key, webhookEventId.toString(), time);
         log.info("Enqueued a webhook event with id: {}", webhookEventId);
     }
 
+    /**
+     * Removes up to {@code limit} IDs scored no later than now, then returns them for asynchronous delivery.
+     *
+     * @param limit maximum number of event IDs to claim
+     * @return due event identifiers, possibly empty
+     */
     public Set<UUID> pollDue(int limit) {
         long time = Instant.now().toEpochMilli();
         // rangeByScoreWithScores is to fetch records on the basis of their

@@ -15,6 +15,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configures stateless JWT and API-key security chains with idempotency filtering.
+ *
+ * <p>Account and merchant-management routes use JWT authentication, payment and vault routes use API-key
+ * authentication, and stored passwords are BCrypt-hashed. Credentials and password material are not returned or
+ * logged by these beans.
+ */
 @Configuration
 @RequiredArgsConstructor
 public class WebSecurityConfig {
@@ -25,6 +32,12 @@ public class WebSecurityConfig {
     private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
     private final IdempotencyFilter idempotencyFilter;
 
+        /**
+         * Configures the stateless JWT chain for matched merchant/admin routes.
+         *
+         * @param httpSecurity builder for the JWT filter chain
+         * @return the configured stateless JWT chain
+         */
     @Bean
     @Order(1)
     public SecurityFilterChain jwtChain(HttpSecurity httpSecurity) {
@@ -42,6 +55,12 @@ public class WebSecurityConfig {
                 .build();
     }
 
+        /**
+         * Configures the stateless API-key chain for payment routes.
+         *
+         * @param httpSecurity builder for the API-key filter chain
+         * @return the configured stateless API-key chain
+         */
     @Bean
     @Order(2)
     public SecurityFilterChain apiKeyChain(HttpSecurity httpSecurity) {
@@ -58,11 +77,23 @@ public class WebSecurityConfig {
                 .build();
     }
 
+        /**
+         * Provides BCrypt encoding so persisted account passwords are hashes rather than plaintext.
+         *
+         * @return password encoder for account authentication
+         */
     @Bean
     public PasswordEncoder encodedPassword() {
         return new BCryptPasswordEncoder();
     }
 
+        /**
+         * Wires email-based user lookup and the configured password encoder into the DAO authentication provider.
+         *
+         * @param merchantUserDetailsService email-based account lookup service
+         * @param passwordEncoder BCrypt password encoder
+         * @return authentication manager backed by the DAO provider
+         */
     @Bean
     public AuthenticationManager authenticationManager(MerchantUserDetailsService merchantUserDetailsService,
                                                        PasswordEncoder passwordEncoder) {

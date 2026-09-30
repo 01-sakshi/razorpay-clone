@@ -30,11 +30,13 @@ public class WebhookDeliveryScheduler {
     private final WebhookEventRepository webhookEventRepository;
     private ExecutorService virtualExecutorService;
 
+    /** Initializes the per-task virtual-thread executor used by the polling worker. */
     @PostConstruct
     void init() {
         virtualExecutorService = Executors.newVirtualThreadPerTaskExecutor();
     }
 
+    /** Stops accepting webhook delivery tasks as the application component is destroyed. */
     @PreDestroy
     void shutdown() {
         virtualExecutorService.shutdown();
@@ -43,6 +45,7 @@ public class WebhookDeliveryScheduler {
     @Value("${app.webhook.delivery.poll-batch-size:100}")
     private int batchSize;
 
+    /** Polls up to the configured batch size of due IDs every five seconds and submits each delivery independently. */
     @Scheduled(fixedDelay = 5000)
     public void pollAndDeliver() {
         Set<UUID> pollDue = retryQueue.pollDue(batchSize);
@@ -56,6 +59,7 @@ public class WebhookDeliveryScheduler {
         }
     }
 
+    /** Repairs missed Redis queue entries every ten seconds from due database rows marked {@code PENDING}. */
     @Scheduled(fixedDelay = 10000)
     public void reconcileFromDatabase() {
         List<WebhookEvent> events = webhookEventRepository

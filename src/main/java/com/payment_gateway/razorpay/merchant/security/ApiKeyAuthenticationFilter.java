@@ -44,6 +44,11 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     @Value("${app.rate-limit.use-case.api-key.requests-per-min:2}")
     private Integer maxRequestsAllowed;
 
+    /**
+     * Passes non-Basic requests onward; for Basic credentials, loads key metadata from Redis or the database,
+     * validates the secret and enabled state, rate-limits by key ID, then sets the security and merchant contexts.
+     * Invalid credentials and rate-limit failures are delegated to the MVC exception resolver.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
@@ -101,6 +106,14 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
+    /**
+     * Accepts a BCrypt match against the current secret hash, otherwise evaluates the cached grace-period fallback.
+     * The fallback comparison is performed against the entry's stored key fields as implemented here.
+     *
+     * @param rawSecret secret supplied in the Basic credentials
+     * @param apiKeyEntry cached hashes and rotation-grace metadata for the key
+     * @return whether the credential passes the current or grace-period check
+     */
     private boolean secretMatches(String rawSecret, ApiKeyCacheEntry apiKeyEntry) {
         if (BCRYPT.matches(rawSecret, apiKeyEntry.keySecretHash()))
             return true;   /* Verify the encoded password obtained from storage matches the submitted raw
@@ -110,6 +123,12 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
                 apiKeyEntry.previousKeySecretHash().equals(apiKeyEntry.keyId());
     }
 
+    /**
+     * Base64-decodes the text after {@code Basic } and splits at the first colon, preserving colons in the secret.
+     *
+     * @param header Authorization header with the Basic scheme
+     * @return key ID and secret in that order, or {@code null} when the decoded value has no colon
+     */
     private String[] decode(String header) {
         String encoded = header.substring(BASIC_PREFIX.length());
         String decoded = new String(Base64.getDecoder().decode(encoded), StandardCharsets.UTF_8);

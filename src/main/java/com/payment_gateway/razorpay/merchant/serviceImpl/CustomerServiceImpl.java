@@ -20,6 +20,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final MerchantRepository merchantRepository;
 
+        /** Reuses the customer with the same merchant/email pair; guests with blank email are deliberately left unlinked. */
     @Override
     public UUID findOrCreate(UUID merchantId, String name, String phone, String email) {
         /* if email in param is null, request could be from a guest account wherein user doesn't
@@ -31,6 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseGet(() -> createNew(merchantId, name, phone, email));
     }
 
+        /** Persists a new profile under the specified merchant and returns the generated database ID. */
     private UUID createNew(UUID merchantId, String name, String phone, String email) {
         Merchant merchant = merchantRepository.findById(merchantId)
                 .orElseThrow(() -> new ResourceNotFoundException("merchant", merchantId));

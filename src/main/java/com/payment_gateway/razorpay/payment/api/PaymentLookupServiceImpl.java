@@ -19,6 +19,7 @@ public class PaymentLookupServiceImpl implements PaymentLookupService {
 
     private final PaymentRepository paymentRepository;
 
+    /** Queries captured payments for the merchant using the repository's update lock for the enclosing transaction. */
     @Override
     public List<Payment> findUnsettledCapturedPayments(UUID merchantId) {
         return paymentRepository.findByMerchantIdAndStatusForUpdate(merchantId, PaymentStatus.CAPTURED);

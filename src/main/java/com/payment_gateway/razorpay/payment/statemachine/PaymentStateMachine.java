@@ -10,6 +10,12 @@ import java.util.Map;
 @Component
 public class PaymentStateMachine {
 
+    /**
+     * Key identifying one allowed payment state transition.
+     *
+     * @param fromState current payment state
+     * @param event event applied to the current state
+     */
     public record Transition(PaymentStatus fromState, PaymentEvent event) {
     }
 
@@ -31,6 +37,15 @@ public class PaymentStateMachine {
             Map.entry(new Transition(PaymentStatus.PARTIALLY_REFUNDED, PaymentEvent.REFUND_COMPLETE), PaymentStatus.REFUNDED)
     );
 
+    /**
+     * Resolves the explicit transition table for the current status/event pair; unsupported pairs are rejected rather
+     * than silently leaving the payment unchanged.
+     *
+     * @param fromState current persisted payment state
+     * @param paymentEvent event being applied
+     * @return next state defined by the transition table
+     * @throws InvalidStateTransitionException if the pair has no configured transition
+     */
     public PaymentStatus transition(PaymentStatus fromState, PaymentEvent paymentEvent) {
         PaymentStatus toState = TRANSITION.get(new Transition(fromState, paymentEvent));
         if (toState == null) throw new InvalidStateTransitionException(fromState.name(), paymentEvent.name());

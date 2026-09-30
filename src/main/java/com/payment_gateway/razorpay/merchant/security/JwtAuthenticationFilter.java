@@ -27,6 +27,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final MerchantContext merchantContext;
 
+    /**
+     * For Bearer requests, verifies the signed claims and, when no authentication is already set, installs the role
+     * authority and merchant ID before continuing the chain; absent tokens pass through for other filters to handle.
+     * Token or claim failures are routed to the configured exception resolver.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {

@@ -33,6 +33,11 @@ public class WebhookConfigServiceImpl implements WebhookConfigService {
     private final WebhookConfigMapper webhookConfigMapper;
     private final BytesEncryptor bytesEncryptor;
 
+    /**
+     * Generates a signing secret, encrypts it before persistence, and includes the raw value only in the creation response.
+     *
+     * @throws ResourceNotFoundException if the owning merchant does not exist
+     */
     @Override
     @Transactional
     public WebhookConfigResponse create(UUID merchantId, WebhookConfigRequest webhookConfigRequest) {
@@ -55,17 +60,20 @@ public class WebhookConfigServiceImpl implements WebhookConfigService {
         return webhookConfigMapper.toResponse(merchantWebhookConfig, rawSecret);
     }
 
+    /** Loads all configurations by merchant ID and maps each response without secret material. */
     @Override
     public List<WebhookConfigResponse> getAll(UUID merchantId) {
         return webhookConfigRepository.findByMerchantId(merchantId).stream()
                 .map(merchantWebhookConfig -> webhookConfigMapper.toResponse(merchantWebhookConfig, null)).toList();
     }
 
+    /** Resolves the configuration using both IDs and maps it without secret material; foreign IDs are not found. */
     @Override
     public WebhookConfigResponse getById(UUID merchantId, UUID webhookConfigId) {
         return webhookConfigMapper.toResponse(fetchWebhookConfig(merchantId, webhookConfigId), null);
     }
 
+    /** Replaces the target URL and subscription string in a transaction while preserving the encrypted signing secret. */
     @Override
     @Transactional
     public WebhookConfigResponse update(UUID merchantId, UUID merchantConfigId,
@@ -77,12 +85,14 @@ public class WebhookConfigServiceImpl implements WebhookConfigService {
         return webhookConfigMapper.toResponse(merchantWebhookConfig, null);
     }
 
+    /** Deletes only the row matching both merchant and configuration IDs. */
     @Override
     @Transactional
     public void delete(UUID merchantId, UUID webhookConfigId) {
         webhookConfigRepository.deleteByMerchantIdAndId(merchantId, webhookConfigId);
     }
 
+    /** Enforces tenant scoping for reads and updates, mapping both missing and foreign configurations to not found. */
     private MerchantWebhookConfig fetchWebhookConfig(UUID merchantId, UUID webhookConfigId) {
         return webhookConfigRepository
                 .findByMerchantIdAndId(merchantId, webhookConfigId).orElseThrow(

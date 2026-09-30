@@ -17,6 +17,9 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 @RequiredArgsConstructor
+/**
+ * Polls the transactional outbox and publishes pending events to Kafka.
+ */
 public class OutboxPoller {
 
     private final OutboxEventRepository outboxEventRepository;
@@ -24,6 +27,10 @@ public class OutboxPoller {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final OutboxResultHandler resultHandler;
 
+    /**
+     * Polls pending events oldest-first, wraps each payload, and waits up to five seconds for its Kafka send;
+     * successful sends are marked published, while failures increment the persisted retry count.
+     */
     @Scheduled(fixedDelay = 5000)
     public void poll() {
         List<OutboxEvent> pendingEvents = outboxEventRepository.findByStatusOrderByCreatedAtAsc(OutboxStatus.PENDING);
@@ -48,6 +55,7 @@ public class OutboxPoller {
         }
     }
 
+    /** Uses the payload merchant ID as Kafka's message key, falling back to {@code unknown} when absent. */
     private String extractMerchantId(Map<String, Object> payload) {
         Object merchantId = payload.get("merchantId");
         return merchantId != null ? merchantId.toString() : "unknown";

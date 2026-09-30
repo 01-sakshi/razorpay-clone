@@ -34,6 +34,12 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     private BCryptPasswordEncoder BCRYPT = new BCryptPasswordEncoder();
     private final ApiKeyCache apiKeyCache;
 
+    /**
+     * Verifies the merchant exists, generates environment-prefixed credentials, persists only the BCrypt secret hash,
+     * and returns the raw secret in the response once.
+     *
+     * @throws ResourceNotFoundException if the merchant does not exist
+     */
     @Override
     @Transactional
     public ApiKeyCreateResponse create(UUID merchantId, CreateApiKeyRequest createApiKeyRequest) {
@@ -54,11 +60,17 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         return new ApiKeyCreateResponse(apiKey.getId(), apiKey.getKeyId(), keySecret, apiKey.getEnvironment());
     }
 
+    /** Maps all keys for the merchant to public metadata; secret hashes are not included in the response DTO. */
     @Override
     public List<ApiKeyResponse> list(UUID merchantId) {
         return apiKeyMapper.toApikeyResponseList(apiKeyRepository.findByMerchantId(merchantId));
     }
 
+    /**
+     * Disables the key addressed by both merchant ID and key ID and evicts its Redis entry; repeat revocation is a no-op.
+     *
+     * @throws ResourceNotFoundException if the key is absent or belongs to another merchant
+     */
     @Override
     @Transactional
     public String revoke(UUID merchantId, String keyId) {
@@ -78,6 +90,13 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         return "Api Key revoked";
     }
 
+    /**
+     * Rotates a merchant-owned enabled key by retaining its current hash, setting a one-hour grace expiry, and storing
+     * a new BCrypt hash; evicts cached metadata before returning replacement credentials.
+     *
+     * @throws ResourceNotFoundException if the key is absent or belongs to another merchant
+     * @throws ApiKeyDisabledException if the key has already been revoked
+     */
     @Override
     @Transactional
     public ApiKeyCreateResponse rotate(UUID merchantId, String keyId) {

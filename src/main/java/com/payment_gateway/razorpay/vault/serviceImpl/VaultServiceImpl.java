@@ -37,6 +37,14 @@ public class VaultServiceImpl implements VaultService {
     private final BytesEncryptor decEncryptor;
     private final PaymentProcessorRouter paymentProcessorRouter;
 
+    /**
+     * Generates a per-card data key, encrypts the PAN and then encrypts that key with the vault encryptor, persists
+     * both vault rows transactionally, and returns an opaque merchant/customer token with only card summary fields.
+     *
+     * @param tokenizeRequest card data and optional customer association
+     * @param merchantId owner assigned to the token
+     * @return token plus expiry, detected brand, and last four digits
+     */
     @Override
     @Transactional
     public TokenizeResponse tokenize(TokenizeRequest tokenizeRequest, UUID merchantId) {
@@ -80,6 +88,11 @@ public class VaultServiceImpl implements VaultService {
                 lastFour);
     }
 
+    /**
+     * Looks up an unrevoked token, decrypts its PAN and expiry for processor routing, converts any exception into
+     * {@code VAULT_CHARGE_FAILED}, and zeroes the temporary PAN byte buffer in {@code finally}. This lookup is by token
+     * only and does not check token ownership against a merchant ID.
+     */
     @Override
     @Transactional
     public PaymentProcessorResponse charge(UUID paymentId, String token, Money amount,
@@ -112,6 +125,7 @@ public class VaultServiceImpl implements VaultService {
         }
     }
 
+    /** Maps BIN prefixes 4, 5/2, and 37/34 to Visa, Mastercard, and Amex respectively; all other prefixes map to RuPay. */
     private CardBrand detectBrand(String ch) {
         if (ch.startsWith("4"))
             return CardBrand.VISA;

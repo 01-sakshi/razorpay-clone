@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class BankTransferProcessorImpl implements BankTransferProcessor {
+    /** Generates a synthetic transfer registration reference; this implementation does not call a bank API. */
     @Override
     public BankTransferResult initiate(UUID settlementId, UUID merchantId, Money amount,
             SettlementBankDetails bankDetails) {

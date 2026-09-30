@@ -36,6 +36,11 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
+    /**
+     * Rejects an existing merchant email, then transactionally saves the merchant and an OWNER account with a BCrypt password hash.
+     *
+     * @throws DuplicateResourceException if the email is already registered
+     */
     @Override
     @Transactional
     public MerchantResponse signUp(MerchantSignupRequest merchantSignupRequest) {
@@ -61,6 +66,7 @@ public class AuthServiceImpl implements AuthService {
         return merchantMapper.toResponse(merchant);
     }
 
+    /** Authenticates the email/password pair, resolves its merchant and role, and issues a signed access token. */
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(

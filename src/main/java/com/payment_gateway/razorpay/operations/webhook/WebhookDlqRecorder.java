@@ -24,6 +24,7 @@ public class WebhookDlqRecorder {
     private final WebhookEventRepository webhookEventRepository;
     private final DlqEventRepository dlqEventRepository;
 
+    /** Uses a new transaction to mark an exhausted delivery {@code DEAD} and persist its final error and payload. */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void recordInDlqAfterRetryAttemptsExhausted(WebhookEvent event, String error) {
         log.info("Recording the DLQ event with event id : {}", event.getId());
@@ -40,6 +41,7 @@ public class WebhookDlqRecorder {
         dlqEvent = dlqEventRepository.save(dlqEvent);
     }
 
+    /** Persists a failed Kafka envelope as a DLQ row, extracting a UUID merchant ID from {@code data} when possible. */
     public void recordInDlqAfterFailedInConsumer(ConsumerRecord<String, Map<String, Object>> consumerRecord,
             String error) {
         Map<String, Object> envelope = consumerRecord.value();

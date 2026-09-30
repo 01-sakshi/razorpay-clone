@@ -45,6 +45,7 @@ public class AppUser extends BaseAuditEntity implements UserDetails {
     @Column(nullable = false)
     private UserRole role;
 
+    /** Converts the persisted role to the single Spring Security authority prefixed with {@code ROLE_}. */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(
@@ -52,11 +53,13 @@ public class AppUser extends BaseAuditEntity implements UserDetails {
         );
     }
 
+    /** Returns the encoded password hash used by the authentication provider; this is not the raw password. */
     @Override
     public @Nullable String getPassword() {
         return passwordHash;
     }
 
+    /** Uses the account email as the Spring Security username. */
     @Override
     public String getUsername() {
         return email;

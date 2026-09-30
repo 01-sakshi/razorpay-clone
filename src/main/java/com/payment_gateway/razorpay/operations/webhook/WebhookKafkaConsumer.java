@@ -26,6 +26,9 @@ import tools.jackson.databind.json.JsonMapper;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+/**
+ * Consumes payment, order, refund, and settlement events and schedules merchant webhook deliveries.
+ */
 public class WebhookKafkaConsumer {
 
     private final MerchantLookupService merchantWebhookApi;
@@ -35,6 +38,11 @@ public class WebhookKafkaConsumer {
     private final WebhookRetryQueue retryQueue;
     private final WebhookDlqRecorder dlqRecorder;
 
+    /**
+     * Resolves the event's merchant subscriptions, signs and persists one pending delivery per target, then queues each
+     * delivery before acknowledging. Database outages leave the Kafka offset unacknowledged for redelivery; malformed
+     * or otherwise unprocessable records are acknowledged and recorded in the dead-letter table.
+     */
     @KafkaListener(topics = {
             "${app.kafka.topics.payment:payment.events}",
             "${app.kafka.topics.order:order.events}",

@@ -70,6 +70,15 @@ public class SlidingWindowLuaScripter implements RateLimiter {
     private final RedisScript<List<Long>> script = RedisScript.of(SLIDING_WINDOW_LUA,
             (Class<List<Long>>) (Class<?>) List.class);
 
+    /**
+     * Runs the prune, count, capacity check, and timestamp insertion atomically in Redis via Lua.
+     * Denials report the oldest timestamp for retry calculation; Redis failures and empty results fail open.
+     *
+     * @param key client or credential scope used to isolate request timestamps
+     * @param maxRequestsAllowed maximum requests permitted in the rolling window
+     * @param windowSeconds rolling-window duration
+     * @return whether this request is allowed, remaining requests, or retry delay
+     */
     @Override
     public RateLimitResult check(String key, int maxRequestsAllowed, int windowSeconds) {
         try {

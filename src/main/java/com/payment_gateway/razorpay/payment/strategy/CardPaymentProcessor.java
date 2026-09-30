@@ -14,6 +14,7 @@ public class CardPaymentProcessor implements PaymentProcessor {
     public static final String PAN_CARD_DECLINED = "4000000000000002";
     public static final String PAN_CARD_EXPIRED = "4000000000000002";
 
+    /** Returns a simulated decline for the configured decline PAN and a generated pending reference for other PANs. */
     @Override
     public PaymentProcessorResponse charge(PaymentProcessorRequest request) {
         String pan = request.pan();

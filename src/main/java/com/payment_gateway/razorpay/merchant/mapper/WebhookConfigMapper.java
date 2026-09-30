@@ -10,6 +10,7 @@ import com.payment_gateway.razorpay.merchant.entity.MerchantWebhookConfig;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface WebhookConfigMapper {
 
+    /** Maps configuration metadata and the supplied raw secret; callers pass {@code null} on reads to avoid exposing it. */
     @Mapping(target = "webhookSecret", source = "rawSecret")
     WebhookConfigResponse toResponse(MerchantWebhookConfig merchantWebhookConfig, String rawSecret);
 }

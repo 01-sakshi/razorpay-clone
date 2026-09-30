@@ -8,12 +8,16 @@ import com.payment_gateway.razorpay.merchant.entity.MerchantWebhookConfig;
 
 public interface WebhookConfigRepository extends JpaRepository<MerchantWebhookConfig, UUID> {
 
+    /** Lists every configuration for the merchant, including disabled targets. */
     List<MerchantWebhookConfig> findByMerchantId(UUID merchantId);
 
+    /** Resolves a configuration by the composite merchant/configuration scope; foreign IDs produce an empty result. */
     Optional<MerchantWebhookConfig> findByMerchantIdAndId(UUID merchantId, UUID webhookConfigId);
 
+    /** Deletes rows matching both IDs; a missing or foreign configuration results in no matching deletion. */
     void deleteByMerchantIdAndId(UUID merchantId, UUID webhookConfigId);
 
+    /** Lists only enabled delivery targets in the merchant's scope for event subscription filtering. */
     List<MerchantWebhookConfig> findByMerchantIdAndEnabledTrue(UUID merchantId);
     
 }

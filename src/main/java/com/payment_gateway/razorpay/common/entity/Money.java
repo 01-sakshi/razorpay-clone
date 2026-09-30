@@ -24,15 +24,36 @@ public class Money {
 
     }
 
+    /**
+     * Creates a money value without converting the supplied minor units.
+     *
+     * @param amountUnits amount in the smallest currency unit
+     * @param currency currency code associated with the amount
+     * @return the money value
+     */
     public static Money of(Long amountUnits, String currency) {
         return new Money(amountUnits, currency);
     }
 
+    /**
+     * Adds the minor-unit amounts while retaining this value's currency; currencies must match.
+     *
+     * @param other amount to add
+     * @return a new money value containing the sum
+     * @throws IllegalArgumentException if the currencies differ
+     */
     public Money add(Money other) {
         if(!other.currency.equals(this.currency)) throw new IllegalArgumentException("Chal be!");
         return new Money(this.amountUnits + other.amountUnits, this.currency);
     }
 
+    /**
+     * Subtracts the other minor-unit amount while retaining this value's currency; currencies must match.
+     *
+     * @param other amount to subtract
+     * @return a new money value containing the difference
+     * @throws IllegalArgumentException if the currencies differ
+     */
     public Money subtract(Money other) {
         if(!other.currency.equals(this.currency)) throw new IllegalArgumentException("Chal be!");
         return new Money(this.amountUnits - other.amountUnits, this.currency);

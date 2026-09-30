@@ -6,6 +6,16 @@ import org.hibernate.validator.constraints.LuhnCheck;
 
 import java.util.UUID;
 
+/**
+ * Validated card data submitted for merchant-scoped tokenization.
+ *
+ * @param customerId customer that owns the card token
+ * @param pan 13- to 19-digit Luhn-valid card number; sensitive and never log or return it
+ * @param expiryMonth expiry month from 1 through 12
+ * @param expiryYear non-expired card expiry year
+ * @param cvv three- or four-digit security code; sensitive and never log or persist in responses
+ * @param cardHolderName optional cardholder name of at least three characters when present
+ */
 public record TokenizeRequest(
         @NotNull
         UUID customerId,

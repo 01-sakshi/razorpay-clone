@@ -14,6 +14,7 @@ public class PaymentProcessorRouter {
 
     private final Map<PaymentMethod, PaymentProcessor> paymentProcessorMap;
 
+    /** Dispatches a charge by payment method and throws when the method has no registered processor. */
     public PaymentProcessorResponse charge(PaymentProcessorRequest request) {
         PaymentProcessor paymentProcessor = paymentProcessorMap.get(request.paymentMethod());
         if(paymentProcessor == null) {

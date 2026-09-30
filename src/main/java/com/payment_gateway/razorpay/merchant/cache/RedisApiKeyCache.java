@@ -19,6 +19,7 @@ public class RedisApiKeyCache implements ApiKeyCache {
     private final ObjectMapper objectMapper;
     private final String API_KEY_PREFIX = "apiKey:";
 
+    /** Reads and deserializes the key-ID entry; missing, malformed, or unreadable cache data becomes a cache miss. */
     @Override
     public Optional<ApiKeyCacheEntry> get(String keyId) {
         try {
@@ -31,6 +32,7 @@ public class RedisApiKeyCache implements ApiKeyCache {
         }
     }
 
+    /** Serializes the entry under the API-key namespace with a five-minute TTL; Redis write failures are logged. */
     @Override
     public void put(String keyId, ApiKeyCacheEntry apiKeyCacheEntry) {
         try {
@@ -41,6 +43,7 @@ public class RedisApiKeyCache implements ApiKeyCache {
         }
     }
 
+    /** Deletes the namespaced cache entry so a rotated or revoked credential is not reused from Redis. */
     @Override
     public void evict(String keyId) {
         try {

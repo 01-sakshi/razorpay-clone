@@ -40,6 +40,13 @@ public class WebhookDeliverExecutor {
     @Value("${app.webhook.delivery.signature-header:X-Razorpay-Signature}")
     private String signatureHeader;
 
+    /**
+     * Posts the event and signature to its configured target, marks 2xx responses delivered, and routes non-2xx or
+     * client failures through the retry schedule; after seven attempts the event is moved to the dead-letter table.
+     * Terminal events are not sent again.
+     *
+     * @param webhookEventId event to deliver
+     */
     @Transactional
     public void deliver(UUID webhookEventId) {
         Optional<WebhookEvent> optionalEvent = webhookEventRepository.findById(webhookEventId);
@@ -87,6 +94,10 @@ public class WebhookDeliverExecutor {
         }
     }
 
+    /**
+     * Persists the next retry time and enqueues the event using the attempt-indexed backoff, or records it in the DLQ
+     * once the maximum attempt count has been reached.
+     */
     private void handleAttemptFailed(WebhookEvent event, String error) {
         if (event.getAttempts() >= MAX_ATTEMPTS) {
             // move to Dead Letter Queue(DLQ)

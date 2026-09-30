@@ -19,6 +19,7 @@ public class PaymentAdapterConfig {
     private final NetBankingAdapter netBankingAdapter;
     private final UpiPaymentAdapter upiPaymentAdapter;
 
+    /** Builds the immutable method-to-adapter registry used by the gateway router. */
     @Bean
     public Map<PaymentMethod, PaymentAdapter> paymentAdapterMap() {
         return Map.of(

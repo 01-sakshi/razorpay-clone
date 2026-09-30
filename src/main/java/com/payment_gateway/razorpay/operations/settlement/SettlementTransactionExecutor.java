@@ -44,6 +44,14 @@ public class SettlementTransactionExecutor {
     private final BankTransferProcessor bankTransferProcessor;
     private final OutboxEventPublisher outboxEventPublisher;
 
+    /**
+     * In one transaction, groups the merchant's unsettled captured payments, computes a 2% fee plus 18% GST on that fee,
+     * persists the settlement and payment links, then registers a transfer. A missing destination or transfer failure
+     * leaves the settlement in {@code FAILED}; an empty payment set creates no settlement.
+     *
+     * @param merchantId merchant whose captured payments are settled
+     * @param dateTime timestamp used to derive the batch's logged local date
+     */
     @Transactional
     public void processForMerchant(UUID merchantId, Instant dateTime) {
         LocalDate localDate = dateTime.atZone(ZoneId.systemDefault()).toLocalDate();
@@ -99,6 +107,15 @@ public class SettlementTransactionExecutor {
         settlementRepository.save(settlement);
     }
 
+    /**
+     * Resolves only settlements in {@code TRANSFER_PENDING}; a null error code marks them processed, while a supplied
+     * error marks them failed. Saves the state and publishes the corresponding outcome through the outbox.
+     *
+     * @param settlementId settlement receiving the callback
+     * @param errorCode bank failure code, or {@code null} for success
+     * @param errorDescription bank failure detail used in the persisted failure reason
+     * @throws ResourceNotFoundException if the settlement does not exist
+     */
     @Transactional
     public void resolveTransfer(UUID settlementId, String errorCode, String errorDescription) {
         Settlement settlement = settlementRepository.findById(settlementId)

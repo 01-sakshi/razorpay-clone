@@ -26,6 +26,15 @@ public class FixedWindowRateLimiter implements RateLimiter {
 
     private final StringRedisTemplate apiKeyRedis;
 
+    /**
+     * Increments a per-key Redis counter whose TTL starts with the first request in the window.
+     * Requests above the limit are denied with the counter's remaining TTL; a null Redis increment fails open.
+     *
+     * @param key client or credential scope used to isolate the counter
+     * @param maxRequestsAllowed maximum count permitted in one window
+     * @param windowSeconds fixed-window duration
+     * @return whether this request is allowed, remaining requests, or retry delay
+     */
     @Override
     public RateLimitResult check(String key, int maxRequestsAllowed, int windowSeconds) {
         String redisKey = "rateLimit:fixed:" + key;

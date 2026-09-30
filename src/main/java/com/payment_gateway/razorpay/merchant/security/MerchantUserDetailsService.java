@@ -18,6 +18,13 @@ public class MerchantUserDetailsService implements UserDetailsService {
 
     private final AppUserRepository appUserRepository;
 
+    /**
+     * Resolves an application account by email for Spring Security authentication.
+     *
+     * @param username account email supplied by the authentication provider
+     * @return the persisted user details, including encoded credentials and authorities
+     * @throws ResourceNotFoundException if no account has that email
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return appUserRepository.findByEmail(username)

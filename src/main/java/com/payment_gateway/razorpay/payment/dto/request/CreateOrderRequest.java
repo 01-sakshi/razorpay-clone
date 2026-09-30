@@ -8,6 +8,15 @@ import jakarta.validation.constraints.Size;
 import java.time.Instant;
 import java.util.Map;
 
+/**
+ * Request to create a merchant-owned order.
+ *
+ * @param notes optional merchant metadata
+ * @param expiresAt optional expiry; the service supplies its configured default when {@code null}
+ * @param receipt optional merchant-side order reference
+ * @param amount order amount and currency
+ * @param customer optional customer details used for customer lookup or creation
+ */
 public record CreateOrderRequest(
         Map<String, Object> notes,
         Instant expiresAt,
@@ -18,7 +27,14 @@ public record CreateOrderRequest(
         CustomerDetails customer
 ) {
 
-    public record CustomerDetails(
+        /**
+         * Optional customer details attached to an order.
+         *
+         * @param name customer name, up to 50 characters, or {@code null}
+         * @param phone customer phone, up to 20 characters, or {@code null}
+         * @param email customer email, up to 30 characters and valid when present, or {@code null}
+         */
+        public record CustomerDetails(
             @Size(max = 50)
             String name,
 

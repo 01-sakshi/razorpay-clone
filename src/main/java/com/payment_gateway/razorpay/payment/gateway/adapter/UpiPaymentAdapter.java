@@ -19,6 +19,10 @@ public class UpiPaymentAdapter implements PaymentAdapter {
 
     private final PaymentProcessorRouter paymentProcessorRouter;
 
+    /**
+     * Creates a non-card processor request from the UPI method details and maps pending, success, or failure back
+     * to the gateway result; exceptions become {@code UPI_FAILED} results.
+     */
     @Override
     public PaymentResult initiate(PaymentRequest paymentRequest) {
         log.info("Initiate Payment with UpiPaymentAdapter, paymentId: {}", paymentRequest.paymentId());
@@ -44,6 +48,7 @@ public class UpiPaymentAdapter implements PaymentAdapter {
         }
     }
 
+    /** Returns a fixed simulated success reference; no external UPI capture is performed here. */
     @Override
     public PaymentResult capture(UUID paymentId) {
         return new PaymentResult.Success("UPI_REF");

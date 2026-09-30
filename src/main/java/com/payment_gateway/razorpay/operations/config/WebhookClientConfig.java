@@ -8,6 +8,7 @@ import org.springframework.web.client.RestClient;
 @Configuration
 public class WebhookClientConfig {
 
+    /** Creates the webhook HTTP client with a three-second connect timeout and five-second response timeout. */
     @Bean
     public RestClient webhookRestClient() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();

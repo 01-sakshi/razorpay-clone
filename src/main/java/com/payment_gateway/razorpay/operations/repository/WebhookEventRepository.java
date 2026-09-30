@@ -10,6 +10,7 @@ import com.payment_gateway.razorpay.operations.entity.WebhookEvent;
 
 public interface WebhookEventRepository extends JpaRepository<WebhookEvent, UUID> {
 
+    /** Selects events with the exact status and a retry timestamp strictly earlier than the cutoff for queue reconciliation. */
     List<WebhookEvent> findByEventStatusAndNextRetryAtBefore(WebhookEventStatus pending, Instant instant);
 
 }

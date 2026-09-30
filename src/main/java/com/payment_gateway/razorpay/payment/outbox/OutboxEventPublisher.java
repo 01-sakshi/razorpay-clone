@@ -16,6 +16,7 @@ public class OutboxEventPublisher {
 
     private final OutboxEventRepository outboxEventRepository;
 
+    /** Saves the aggregate event and payload as an outbox row for the scheduled Kafka poller to publish. */
     public void publish(EventAggregateType aggregateType, UUID aggregateId, String eventType,
                         Map<String, Object> payload) {
 

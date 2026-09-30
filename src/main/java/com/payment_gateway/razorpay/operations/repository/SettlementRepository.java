@@ -10,6 +10,7 @@ import com.payment_gateway.razorpay.operations.entity.Settlement;
 
 public interface SettlementRepository extends JpaRepository<Settlement, UUID> {
 
+    /** Selects settlements in the requested state for bank callback simulation or operational processing. */
     List<Settlement> findByStatus(SettlementStatus transferPending);
 
 }

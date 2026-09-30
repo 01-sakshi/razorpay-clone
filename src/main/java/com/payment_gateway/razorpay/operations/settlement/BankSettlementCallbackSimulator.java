@@ -20,6 +20,7 @@ public class BankSettlementCallbackSimulator {
     private final SettlementRepository settlementRepository;
     private final SettlementTransactionExecutor settlementTransactionExecutor;
 
+    /** Finds settlements still awaiting transfer and invokes the simulator for each; an empty batch is a no-op. */
     @Scheduled(fixedDelay = 5000)
     public void processCallbacks() {
         List<Settlement> settlements = settlementRepository.findByStatus(SettlementStatus.TRANSFER_PENDING);
@@ -30,6 +31,7 @@ public class BankSettlementCallbackSimulator {
         }
     }
 
+    /** Feeds a successful simulated bank result to the transaction executor for the supplied pending settlement. */
     public void simulateCallback(Settlement settlement) {
         log.info("Initiating settlement callback for settlement id : {}", settlement.getId());
         settlementTransactionExecutor.resolveTransfer(settlement.getId(), null, null);

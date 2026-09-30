@@ -10,6 +10,7 @@ import java.util.Objects;
 
 @Component
 public class UpiPaymentProcessor implements PaymentProcessor {
+    /** Returns {@code UPI_REJECTED} for VPA {@code fail@okaxis}; other supplied VPAs receive a pending reference. */
     @Override
     public PaymentProcessorResponse charge(PaymentProcessorRequest request) {
         final String VPA_CODE_FAIL = "fail@okaxis";

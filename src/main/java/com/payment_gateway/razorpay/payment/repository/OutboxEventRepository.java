@@ -8,5 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface OutboxEventRepository extends JpaRepository<OutboxEvent, UUID> {
+    /** Returns all events in the requested status oldest-first so the poller preserves enqueue order. */
     List<OutboxEvent> findByStatusOrderByCreatedAtAsc(OutboxStatus outboxStatus);
 }

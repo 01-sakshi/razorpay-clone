@@ -43,6 +43,12 @@ public class OrderServiceImpl implements OrderService {
     @Value("${payment.order.default-order-expiry-seconds}")
     private int defaultOrderExpirySeconds;
 
+    /**
+     * Rejects a duplicate receipt within the merchant, resolves an optional customer, applies the default expiry when
+     * absent, persists the order, and records {@code ORDER_CREATED} in the outbox.
+     *
+     * @throws DuplicateResourceException if the merchant already used the receipt
+     */
     @Override
     @Transactional
     public OrderResponse create(UUID merchantId, CreateOrderRequest createOrderRequest) {
@@ -79,11 +85,7 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toResponse(orderRecord);
     }
 
-    /**
-     * @param merchantId
-     * @param orderId
-     * @return OrderResponse
-     */
+    /** Loads and maps an order only when both its ID and merchant ID match; foreign IDs are indistinguishable from missing. */
     @Override
     public OrderResponse get(UUID merchantId, UUID orderId) {
         return orderRepository.findByIdAndMerchant(orderId, merchantId)
@@ -92,9 +94,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * @param merchantId
-     * @param orderId
-     * @return String
+     * Marks a merchant-owned order cancelled and records {@code ORDER_CANCELLED}; paid or already-cancelled orders are
+     * rejected as a business-rule violation, and missing or foreign orders fail as not found.
      */
     @Override
     @Transactional
@@ -121,11 +122,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("order", orderId));
     }
 
-    /**
-     * @param merchantId
-     * @param orderId
-     * @return List<PaymentResponse>
-     */
+    /** Verifies merchant ownership before querying and mapping all payment attempts for the order. */
     @Override
     public List<PaymentResponse> list(UUID merchantId, UUID orderId) {
         if (!orderRepository.existsByIdAndMerchant(orderId, merchantId))

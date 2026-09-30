@@ -4,6 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Request to create or update a merchant webhook configuration.
+ *
+ * @param targetUrl required HTTP or HTTPS delivery URL, up to 500 characters
+ * @param eventTypes comma-separated event names, {@code null}, blank, or {@code ALL} for every event
+ */
 public record WebhookConfigRequest(
     @NotBlank(message = "targetUrl cannot be blank")
     @Size(max = 500)

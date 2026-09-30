@@ -20,6 +20,13 @@ public class CardPaymentAdapter implements PaymentAdapter {
     private final PaymentProcessorRouter paymentProcessorRouter;
     private final VaultService vaultService;
 
+    /**
+     * Reads the card token from method details, asks the vault to decrypt and charge it, then maps the processor result.
+     * Exceptions are converted to {@code CARD_PAYMENT_FAILED}; this adapter does not expose the PAN to its caller.
+    *
+    * @param paymentRequest payment and token details for the vault charge
+    * @return pending, success, or failure gateway result
+     */
     @Override
     public PaymentResult initiate(PaymentRequest paymentRequest) {
         log.info("Initiate Payment with CardPaymentAdapter, paymentId: {}", paymentRequest.paymentId());
@@ -41,6 +48,12 @@ public class CardPaymentAdapter implements PaymentAdapter {
         }
     }
 
+    /**
+     * Returns a fixed simulated success reference; no external card-network capture is performed here.
+     *
+     * @param paymentId payment identifier to capture
+     * @return simulated successful capture result
+     */
     @Override
     public PaymentResult capture(UUID paymentId) {
         return new PaymentResult.Success("CARD_REF");

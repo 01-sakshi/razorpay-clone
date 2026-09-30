@@ -19,6 +19,10 @@ public class NetBankingAdapter implements PaymentAdapter {
 
     private final PaymentProcessorRouter paymentProcessorRouter;
 
+    /**
+     * Creates a non-card processor request from the bank method details and maps pending, success, or failure back
+     * to the gateway result; exceptions become {@code NETBANKING_FAILED} results.
+     */
     @Override
     public PaymentResult initiate(PaymentRequest paymentRequest) {
         log.info("Initiate Payment with NetBankingAdapter, paymentId: {}", paymentRequest.paymentId());
@@ -43,6 +47,7 @@ public class NetBankingAdapter implements PaymentAdapter {
         }
     }
 
+    /** Returns a fixed simulated success reference; no external bank capture is performed here. */
     @Override
     public PaymentResult capture(UUID paymentId) {
         return new PaymentResult.Success("NET_BANKING_REF");
