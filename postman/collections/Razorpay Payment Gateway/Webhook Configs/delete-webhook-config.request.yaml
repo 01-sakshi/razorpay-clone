@@ -1,12 +1,13 @@
 $kind: http-request
 name: Delete Webhook Config
 method: DELETE
-url: '{{baseUrl}}/v1/merchants/webhooks/:configId'
+url: "{{baseUrl}}/v1/merchants/webhooks/064c9e8f-4d5e-4814-8247-e80fc44e84bc"
+examples: .resources/delete-webhook-config.resources/examples
 order: 5000
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status is 204 No Content", function () {
           pm.response.to.have.status(204);
       });
+    language: text/javascript

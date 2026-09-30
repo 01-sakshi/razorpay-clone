@@ -1,24 +1,24 @@
 $kind: http-request
 name: Create Webhook Config
 method: POST
-url: '{{baseUrl}}/v1/merchants/webhooks/create'
+url: "{{baseUrl}}/v1/merchants/webhooks/create"
+examples: .resources/create-webhook-config.resources/examples
 order: 1000
 headers:
   - key: Content-Type
     value: application/json
   - key: X-Idempotency-Key
-    value: '{{$guid}}'
+    value: "{{$guid}}"
     description: Optional idempotency key to prevent duplicate webhook config creation
 body:
   type: json
   content: |-
     {
-      "targetUrl": "https://your-server.example.com/webhooks/razorpay",
-      "eventTypes": "PAYMENT_STATUS_CHANGED,REFUND_CREATED"
+      "targetUrl": "http:///localhost:8080/v1/merchant/webhooks",
+      "eventTypes": "ALL"
     }
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status is 200 OK", function () {
           pm.response.to.have.status(200);
@@ -30,3 +30,4 @@ scripts:
           pm.expect(json).to.have.property("webhookSecret");
           pm.collectionVariables.set("webhookConfigId", json.id);
       });
+    language: text/javascript

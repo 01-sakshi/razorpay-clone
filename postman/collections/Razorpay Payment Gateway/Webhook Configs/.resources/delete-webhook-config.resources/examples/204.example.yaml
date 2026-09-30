@@ -1,0 +1,21 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/merchants/webhooks/064c9e8f-4d5e-4814-8247-e80fc44e84bc"
+  method: DELETE
+response:
+  statusCode: 204
+  statusText: ""
+  headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    date: Wed, 30 Sep 2026 13:17:54 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: text
+    content: ""
+order: 1790774546779

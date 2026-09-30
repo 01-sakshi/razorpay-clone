@@ -41,7 +41,7 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     private final ApiKeyCache apiKeyCache;  //Since ApiKeyCache has single implementation i.e RedisApiKeyCache so we can directly inject the interface here
     private final RateLimiter rateLimiter;
 
-    @Value("${app.rate-limit.use-case.api-key.requests-per-min:2}")
+    @Value("${app.rate-limit.use-case.api-key.requests-per-minute:2}")
     private Integer maxRequestsAllowed;
 
     /**

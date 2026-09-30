@@ -5,11 +5,11 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.payment_gateway.razorpay.common.exceptions.ResourceNotFoundException;
 import com.payment_gateway.razorpay.common.util.RandomizerUtil;
 import com.payment_gateway.razorpay.merchant.dto.request.WebhookConfigRequest;
 import com.payment_gateway.razorpay.merchant.dto.response.WebhookConfigResponse;
@@ -34,7 +34,8 @@ public class WebhookConfigServiceImpl implements WebhookConfigService {
     private final BytesEncryptor bytesEncryptor;
 
     /**
-     * Generates a signing secret, encrypts it before persistence, and includes the raw value only in the creation response.
+     * Generates a signing secret, encrypts it before persistence, and includes the
+     * raw value only in the creation response.
      *
      * @throws ResourceNotFoundException if the owning merchant does not exist
      */
@@ -60,20 +61,29 @@ public class WebhookConfigServiceImpl implements WebhookConfigService {
         return webhookConfigMapper.toResponse(merchantWebhookConfig, rawSecret);
     }
 
-    /** Loads all configurations by merchant ID and maps each response without secret material. */
+    /**
+     * Loads all configurations by merchant ID and maps each response without secret
+     * material.
+     */
     @Override
     public List<WebhookConfigResponse> getAll(UUID merchantId) {
         return webhookConfigRepository.findByMerchantId(merchantId).stream()
                 .map(merchantWebhookConfig -> webhookConfigMapper.toResponse(merchantWebhookConfig, null)).toList();
     }
 
-    /** Resolves the configuration using both IDs and maps it without secret material; foreign IDs are not found. */
+    /**
+     * Resolves the configuration using both IDs and maps it without secret
+     * material; foreign IDs are not found.
+     */
     @Override
     public WebhookConfigResponse getById(UUID merchantId, UUID webhookConfigId) {
         return webhookConfigMapper.toResponse(fetchWebhookConfig(merchantId, webhookConfigId), null);
     }
 
-    /** Replaces the target URL and subscription string in a transaction while preserving the encrypted signing secret. */
+    /**
+     * Replaces the target URL and subscription string in a transaction while
+     * preserving the encrypted signing secret.
+     */
     @Override
     @Transactional
     public WebhookConfigResponse update(UUID merchantId, UUID merchantConfigId,
@@ -92,12 +102,15 @@ public class WebhookConfigServiceImpl implements WebhookConfigService {
         webhookConfigRepository.deleteByMerchantIdAndId(merchantId, webhookConfigId);
     }
 
-    /** Enforces tenant scoping for reads and updates, mapping both missing and foreign configurations to not found. */
+    /**
+     * Enforces tenant scoping for reads and updates, mapping both missing and
+     * foreign configurations to not found.
+     */
     private MerchantWebhookConfig fetchWebhookConfig(UUID merchantId, UUID webhookConfigId) {
         return webhookConfigRepository
                 .findByMerchantIdAndId(merchantId, webhookConfigId).orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                "Merchant Webhook Config not found, merchantId: " + merchantId));
+                        () -> new ResourceNotFoundException("MERCHANT",
+                                "Merchant not found, merchantId: " + merchantId));
     }
 
 }

@@ -14,7 +14,7 @@ body:
   type: json
   content: |-
     {
-      "orderId": "order-unknown-100",
+      "orderId": "8275fb57-3b74-4819-886d-3bb93332748d",
       "paymentMethod": "NETBANKING",
       "methodDetails": {
         "bankCode": "HDFC"

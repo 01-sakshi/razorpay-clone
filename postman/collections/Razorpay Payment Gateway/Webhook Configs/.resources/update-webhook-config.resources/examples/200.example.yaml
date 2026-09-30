@@ -1,0 +1,46 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/merchants/webhooks/:configId"
+  method: PUT
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Idempotency-Key
+      value: "{{$guid}}"
+      description: Optional idempotency key
+  pathVariables:
+    - key: configId
+      value: "{{webhookConfigId}}"
+      description: UUID of the webhook configuration to update
+  body:
+    type: json
+    content: |-
+      {
+        "targetUrl": "http://localhost:8080/v1/merchant/webhooks",
+        "eventTypes": "ALL"
+      }
+response:
+  statusCode: 200
+  statusText: ""
+  headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    content-length: "136"
+    date: Wed, 30 Sep 2026 13:17:17 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "id": "3948f086-ee1a-4306-ade1-9b92f29e2a4e",
+        "targetUrl": "http://localhost:8080/v1/merchant/webhooks",
+        "eventTypes": "ALL",
+        "enabled": true
+      }
+order: 1790774241057

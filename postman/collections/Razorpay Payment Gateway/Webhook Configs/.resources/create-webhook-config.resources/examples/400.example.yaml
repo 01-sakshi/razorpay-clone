@@ -1,0 +1,50 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/merchants/webhooks/create"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Idempotency-Key
+      value: "{{$guid}}"
+      description: Optional idempotency key to prevent duplicate webhook config creation
+  body:
+    type: json
+    content: |-
+      {
+        "targetUrl": "",
+        "eventTypes": "ALL"
+      }
+response:
+  statusCode: 400
+  statusText: ""
+  headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    content-length: "293"
+    date: Wed, 30 Sep 2026 13:23:45 GMT
+    connection: close
+  body:
+    type: json
+    content: |-
+      {
+        "errorCode": "VALIDATION_FAILED",
+        "errorDescription": "Request validation failed",
+        "fieldErrors": [
+          {
+            "field": "targetUrl",
+            "message": "targetUrl cannot be blank"
+          },
+          {
+            "field": "targetUrl",
+            "message": "targetUrl must be a valid URL starting with http or https"
+          }
+        ],
+        "timeStamp": "2026-09-30T13:23:45.467796800Z"
+      }
+order: 3070269200629714

@@ -25,16 +25,22 @@ public class SettlementEngine {
     private final MerchantLookupService merchantLookupService;
     private final SettlementTransactionExecutor settlementTransactionExecutor;
 
-    /** Invokes the all-merchant settlement batch at 23:00 server-local time each day. */
-    @Scheduled(cron = "0 0 23 * * *")
+    /**
+     * Invokes the all-merchant settlement batch at 23:00 server-local time each
+     * day.
+     */
+    @Scheduled(cron = "*/30 * * * * *") // for testing, every 30 seconds
+    // @Scheduled(cron = "0 0 23 * * *")
     public void runScheduled() {
         log.info("Nightly settlement scheduler running");
         run();
     }
 
     /**
-     * Submits one settlement transaction per active merchant on virtual threads and waits for all tasks to finish.
-     * Individual task failures are logged and do not abort processing of the remaining merchants.
+     * Submits one settlement transaction per active merchant on virtual threads and
+     * waits for all tasks to finish.
+     * Individual task failures are logged and do not abort processing of the
+     * remaining merchants.
      */
     public void run() {
         List<UUID> activeMerchants = merchantLookupService.getAllActiveMerchants();

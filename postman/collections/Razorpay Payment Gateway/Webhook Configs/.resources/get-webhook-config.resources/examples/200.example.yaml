@@ -1,0 +1,29 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/merchants/webhooks/3948f086-ee1a-4306-ade1-9b92f29e2a4e"
+  method: GET
+response:
+  statusCode: 200
+  statusText: ""
+  headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Wed, 30 Sep 2026 13:16:14 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "id": "3948f086-ee1a-4306-ade1-9b92f29e2a4e",
+        "targetUrl": "http://localhost:8080/v1/merchant/webhooks",
+        "eventTypes": "ALL",
+        "enabled": true
+      }
+order: 1790774178203
