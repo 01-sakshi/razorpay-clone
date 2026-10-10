@@ -18,7 +18,9 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    /** Converts the configured UTF-8 JWT secret into the HMAC key used for signing and verification. */
+    /**
+     * Converts the configured UTF-8 JWT secret into the HMAC key used for signing and verification.
+     */
     private SecretKey getSecretKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
@@ -26,9 +28,9 @@ public class JwtUtil {
     /**
      * Issues an HMAC-signed token with the email subject, merchant and role claims, and a 100-second lifetime.
      *
-     * @param email authenticated account email used as the subject
+     * @param email      authenticated account email used as the subject
      * @param merchantId tenant identity embedded for request scoping
-     * @param role authority value embedded for authorization
+     * @param role       authority value embedded for authorization
      * @return compact signed JWT
      */
     public String generateAccessToken(String email, UUID merchantId, String role) {
@@ -43,6 +45,7 @@ public class JwtUtil {
     }
 
     //Only for valid JWT Token, Claims is returned from here
+
     /**
      * Verifies the signature and parses a signed JWT; invalid signatures, malformed tokens, and expired tokens fail.
      *
@@ -57,12 +60,16 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    /** Reads the {@code role} claim as a string from already verified claims. */
+    /**
+     * Reads the {@code role} claim as a string from already verified claims.
+     */
     public String extractRole(Claims claims) {
         return claims.get("role", String.class);
     }
 
-    /** Reads the {@code merchant_id} claim as a string from already verified claims. */
+    /**
+     * Reads the {@code merchant_id} claim as a string from already verified claims.
+     */
     public String extractMerchantId(Claims claims) {
         return claims.get("merchant_id", String.class);
     }

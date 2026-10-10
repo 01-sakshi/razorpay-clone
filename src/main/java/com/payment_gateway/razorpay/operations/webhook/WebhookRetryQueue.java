@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WebhookRetryQueue {
 
-    @Value("app.webhook.delivery.redis-key:webhook-retry")
+    @Value("${app.webhook.delivery.redis-key:webhook-retry}")
     private String key;
 
     private final StringRedisTemplate redis;

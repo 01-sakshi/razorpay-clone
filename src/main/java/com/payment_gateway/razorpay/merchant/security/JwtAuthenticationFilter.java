@@ -1,6 +1,7 @@
 package com.payment_gateway.razorpay.merchant.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String authorizationHeader = request.getHeader("Authorization");
 
-            /* We didn't receive JWT token as part of authorizationHeader in the API */
+            /* If we didn't receive JWT token as part of authorizationHeader in the request */
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer")) {
                 log.warn("JWT token is missing in the request header for the request: " + request.getRequestURI());
                 /* Pass the request to the next security filter since this filter is not applicable for the request */
@@ -65,8 +66,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             /* Pass the request to the next security filter */
             filterChain.doFilter(request, response);
-        } catch (Exception e) {
-            /* When we do not specify the handler below and pass it as null, the exception gets propagated
+        } catch (JwtException e) {
+            /* If we do not specify the <handler> below and pass it as null, the exception gets propagated
             to GlobalExceptionHandler which in normal cases only handles the exceptions of MVC layer. */
             handlerExceptionResolver.resolveException(request, response, null, e);
         }

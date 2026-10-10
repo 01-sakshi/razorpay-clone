@@ -8,9 +8,9 @@ import jakarta.validation.constraints.Size;
 /**
  * Validated merchant and initial owner registration data.
  *
- * @param name required merchant owner name, up to 50 characters
- * @param email required account email
- * @param password required password of at least 12 characters; never return or log it
+ * @param name         required merchant owner name, up to 50 characters
+ * @param email        required account email
+ * @param password     required password of at least 12 characters; never return or log it
  * @param businessName required business name, up to 20 characters
  * @param businessType optional business classification
  */

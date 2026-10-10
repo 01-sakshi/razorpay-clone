@@ -1,6 +1,10 @@
 package com.payment_gateway.razorpay.common.entity;
 
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,10 +13,12 @@ import lombok.ToString;
 @Embeddable
 @Getter
 @Setter
-@ToString 
+@ToString
 public class Money {
 
+    @NotNull(message = "Provide valid amount units")
     private Long amountUnits;
+    @NotBlank(message = "Provide valid currency")
     private String currency;
 
     private Money(Long amountUnits, String currency) {
@@ -28,7 +34,7 @@ public class Money {
      * Creates a money value without converting the supplied minor units.
      *
      * @param amountUnits amount in the smallest currency unit
-     * @param currency currency code associated with the amount
+     * @param currency    currency code associated with the amount
      * @return the money value
      */
     public static Money of(Long amountUnits, String currency) {
@@ -43,7 +49,7 @@ public class Money {
      * @throws IllegalArgumentException if the currencies differ
      */
     public Money add(Money other) {
-        if(!other.currency.equals(this.currency)) throw new IllegalArgumentException("Chal be!");
+        if (!other.currency.equals(this.currency)) throw new IllegalArgumentException("Chal be!");
         return new Money(this.amountUnits + other.amountUnits, this.currency);
     }
 
@@ -55,7 +61,7 @@ public class Money {
      * @throws IllegalArgumentException if the currencies differ
      */
     public Money subtract(Money other) {
-        if(!other.currency.equals(this.currency)) throw new IllegalArgumentException("Chal be!");
+        if (!other.currency.equals(this.currency)) throw new IllegalArgumentException("Chal be!");
         return new Money(this.amountUnits - other.amountUnits, this.currency);
     }
 }

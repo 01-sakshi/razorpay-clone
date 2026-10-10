@@ -1,23 +1,21 @@
 package com.payment_gateway.razorpay.merchant.api;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
-import java.util.UUID;
-
-import org.apache.kafka.common.errors.ResourceNotFoundException;
-import org.springframework.security.crypto.encrypt.BytesEncryptor;
-import org.springframework.stereotype.Service;
-
 import com.payment_gateway.razorpay.common.dto.SettlementBankDetails;
 import com.payment_gateway.razorpay.common.dto.WebhookTarget;
 import com.payment_gateway.razorpay.common.enums.MerchantStatus;
 import com.payment_gateway.razorpay.merchant.entity.Merchant;
 import com.payment_gateway.razorpay.merchant.repository.MerchantRepository;
 import com.payment_gateway.razorpay.merchant.repository.WebhookConfigRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.errors.ResourceNotFoundException;
+import org.springframework.security.crypto.encrypt.BytesEncryptor;
+import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -31,10 +29,10 @@ public class MerchantLookupServiceImpl implements MerchantLookupService {
     /**
      * Loads enabled configurations for the merchant, filters by subscription, and decrypts each matching secret
      * for webhook signing. A decryption failure prevents the lookup from returning a partial target list.
-    *
-    * @param merchantId merchant whose enabled configurations are queried
-    * @param eventType event type to match
-    * @return matching webhook targets, possibly empty
+     *
+     * @param merchantId merchant whose enabled configurations are queried
+     * @param eventType  event type to match
+     * @return matching webhook targets, possibly empty
      */
     @Override
     public List<WebhookTarget> getActiveConfigsForEvent(UUID merchantId, String eventType) {

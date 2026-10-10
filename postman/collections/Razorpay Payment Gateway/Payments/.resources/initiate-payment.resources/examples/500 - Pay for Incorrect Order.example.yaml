@@ -19,7 +19,7 @@ request:
         }
       }
 response:
-  statusCode: 500
+  statusCode: 400
   statusText: ""
   headers:
     x-ratelimit-limit: "2"
@@ -31,15 +31,15 @@ response:
     expires: "0"
     x-frame-options: DENY
     content-type: application/json
-    content-length: "252"
-    date: Tue, 29 Sep 2026 16:27:40 GMT
+    content-length: "258"
+    date: Sat, 10 Oct 2026 14:29:02 GMT
     connection: close
   body:
     type: json
     content: |-
       {
-        "errorCode": "ERROR",
+        "errorCode": "BAD_REQUEST",
         "errorDescription": "JSON parse error: Cannot deserialize value of type `java.util.UUID` from String \"order-unknown-100\": UUID has to be represented by standard 36-char representation",
-        "timeStamp": "2026-09-29T16:27:40.841494300Z"
+        "timeStamp": "2026-10-10T14:29:02.599197800Z"
       }
-order: 4287861737476182
+order: 4406223130431572

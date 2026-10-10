@@ -110,7 +110,7 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
      * Accepts a BCrypt match against the current secret hash, otherwise evaluates the cached grace-period fallback.
      * The fallback comparison is performed against the entry's stored key fields as implemented here.
      *
-     * @param rawSecret secret supplied in the Basic credentials
+     * @param rawSecret   secret supplied in the Basic credentials
      * @param apiKeyEntry cached hashes and rotation-grace metadata for the key
      * @return whether the credential passes the current or grace-period check
      */
@@ -120,7 +120,7 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
          password after it too is encoded. */
         return apiKeyEntry.isInGracePeriod() &&
                 apiKeyEntry.keySecretHash() != null &&
-                apiKeyEntry.previousKeySecretHash().equals(apiKeyEntry.keyId());
+                BCRYPT.matches(rawSecret, apiKeyEntry.previousKeySecretHash());
     }
 
     /**

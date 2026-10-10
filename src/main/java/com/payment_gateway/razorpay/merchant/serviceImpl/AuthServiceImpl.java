@@ -1,6 +1,6 @@
 package com.payment_gateway.razorpay.merchant.serviceImpl;
 
-import com.payment_gateway.razorpay.common.constants.ExceptionErrorCode;
+import com.payment_gateway.razorpay.common.constants.ErrorCode;
 import com.payment_gateway.razorpay.common.enums.UserRole;
 import com.payment_gateway.razorpay.common.exceptions.DuplicateResourceException;
 import com.payment_gateway.razorpay.common.exceptions.ResourceNotFoundException;
@@ -32,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
     private final MerchantRepository merchantRepository;
     private final AppUserRepository appUserRepository;
     private final MerchantMapper merchantMapper;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;  //Bean definition in WebSecurityConfig
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
@@ -45,9 +45,11 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public MerchantResponse signUp(MerchantSignupRequest merchantSignupRequest) {
         //Check if merchant already exists
-        // We do not require pessimistic locking for this API, since anyway this API won't allow a request to proceed with duplicate merchant email
+        //We do not require pessimistic locking for this API, since any ways this API won't allow a
+        //request to proceed with duplicate merchant email
         if (merchantRepository.findByEmail(merchantSignupRequest.email()) != null) {
-            throw new DuplicateResourceException(ExceptionErrorCode.DUPLICATE_MERCHANT_EMAIL, "Merchant already exists with email :" + merchantSignupRequest.email());
+            throw new DuplicateResourceException(ErrorCode.DUPLICATE_MERCHANT_EMAIL,
+                    "Merchant already exists with email : " + merchantSignupRequest.email());
         }
 
         //prepare to persist merchant in database
@@ -66,7 +68,9 @@ public class AuthServiceImpl implements AuthService {
         return merchantMapper.toResponse(merchant);
     }
 
-    /** Authenticates the email/password pair, resolves its merchant and role, and issues a signed access token. */
+    /**
+     * Authenticates the email/password pair, resolves its merchant and role, and issues a signed access token.
+     */
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(

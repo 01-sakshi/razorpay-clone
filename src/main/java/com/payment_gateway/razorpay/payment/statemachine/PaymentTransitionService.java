@@ -25,7 +25,7 @@ public class PaymentTransitionService {
      * Validates the event against the state machine, changes the in-memory payment status, and persists a system-actor
      * transition record containing the before/after states and occurrence time.
      *
-     * @param payment payment entity to mutate
+     * @param payment      payment entity to mutate
      * @param paymentEvent event that drives the transition
      * @return the newly assigned status
      * @throws InvalidStateTransitionException if the current state does not allow this event

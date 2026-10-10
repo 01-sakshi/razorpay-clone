@@ -25,7 +25,7 @@ public class ApiKeyController {
     private final MerchantContext merchantContext;
 
     /**
-    * Issues an API key through {@code POST /v1/merchants/api-keys} for the authenticated merchant and requested environment. The raw secret is returned only in
+     * Issues an API key through {@code POST /v1/merchants/api-keys} for the authenticated merchant and requested environment. The raw secret is returned only in
      * this creation response; subsequent list responses expose key metadata, not secret material.
      *
      * @param createApiKeyRequest validated environment for the credentials
@@ -38,7 +38,7 @@ public class ApiKeyController {
     }
 
     /**
-    * Lists API-key metadata through {@code GET /v1/merchants/api-keys} for the authenticated merchant without exposing stored secret hashes or raw secrets.
+     * Lists API-key metadata through {@code GET /v1/merchants/api-keys} for the authenticated merchant without exposing stored secret hashes or raw secrets.
      *
      * @return HTTP 200 with the merchant's API keys
      */
@@ -49,8 +49,8 @@ public class ApiKeyController {
     }
 
     /**
-    * Revokes a key through {@code DELETE /v1/merchants/api-keys/revoke/{keyId}} belonging to the authenticated merchant and invalidates its cached credentials. A key owned by
-     * another merchant is treated as not found.
+     * Revokes a key through {@code DELETE /v1/merchants/api-keys/revoke/{keyId}} belonging to the authenticated merchant and invalidates its cached credentials.
+     * A key owned by another merchant is treated as not found.
      *
      * @param keyId identifier of the key to revoke
      * @return HTTP 200 with the service's revocation result
@@ -62,7 +62,7 @@ public class ApiKeyController {
     }
 
     /**
-    * Rotates an enabled key through {@code POST /v1/merchants/api-keys/rotate/{keyId}} belonging to the authenticated merchant, returning replacement credentials while the
+     * Rotates an enabled key through {@code POST /v1/merchants/api-keys/rotate/{keyId}} belonging to the authenticated merchant, returning replacement credentials while the
      * service applies its configured grace period to the previous key.
      *
      * @param keyId identifier of the key to rotate

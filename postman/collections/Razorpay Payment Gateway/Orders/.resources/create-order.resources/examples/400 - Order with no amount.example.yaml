@@ -1,0 +1,63 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/orders"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Idempotency-Key
+      value: "{{$guid}}"
+      description: Optional idempotency key to prevent duplicate order creation
+  body:
+    type: json
+    content: |-
+      {
+          "amount": {
+              "amountUnits": "",
+              "currency": ""
+          },
+          "receipt": "order_receipt_902",
+          "notes": {
+              "purpose": "Product purchase"
+          },
+          "customer": {
+              "name": "John Doe",
+              "phone": "9876543210",
+              "email": "john@example.com"
+          }
+      }
+response:
+  statusCode: 400
+  statusText: ""
+  headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "1"
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    content-length: "274"
+    date: Sat, 10 Oct 2026 13:44:42 GMT
+    connection: close
+  body:
+    type: json
+    content: |-
+      {
+        "errorCode": "VALIDATION_FAILED",
+        "errorDescription": "Request validation failed",
+        "fieldErrors": [
+          {
+            "field": "amount.amountUnits",
+            "message": "Provide valid amount units"
+          },
+          {
+            "field": "amount.currency",
+            "message": "Provide valid currency"
+          }
+        ],
+        "timeStamp": "2026-10-10T13:44:41.932846100Z"
+      }
+order: 3588458607223653

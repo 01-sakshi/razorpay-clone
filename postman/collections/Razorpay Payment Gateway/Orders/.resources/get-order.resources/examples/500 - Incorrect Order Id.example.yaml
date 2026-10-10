@@ -1,15 +1,13 @@
 $kind: http-example
 request:
-  url: "{{baseUrl}}/v1/orders/:orderId"
+  url: "{{baseUrl}}/v1/orders/1234"
   method: GET
-  pathVariables:
-    - key: orderId
-      value: "{{orderId}}"
-      description: UUID of the order
 response:
-  statusCode: 500
+  statusCode: 400
   statusText: ""
   headers:
+    x-ratelimit-limit: "2"
+    x-ratelimit-remaining: "1"
     x-content-type-options: nosniff
     x-xss-protection: "0"
     cache-control: no-cache, no-store, max-age=0, must-revalidate
@@ -18,14 +16,14 @@ response:
     x-frame-options: DENY
     content-type: application/json
     transfer-encoding: chunked
-    date: Fri, 25 Sep 2026 02:49:40 GMT
+    date: Sat, 10 Oct 2026 14:02:00 GMT
     connection: close
   body:
     type: json
     content: |-
       {
-        "errorCode": "ERROR",
-        "errorDescription": "Invalid or missing API Key",
-        "timeStamp": "2026-09-25T02:49:40.051691900Z"
+        "errorCode": "INVALID_REQUEST",
+        "errorDescription": "Invalid UUID string: 1234",
+        "timeStamp": "2026-10-10T14:02:00.049105900Z"
       }
-order: 1676363216715356
+order: 3315776062370478

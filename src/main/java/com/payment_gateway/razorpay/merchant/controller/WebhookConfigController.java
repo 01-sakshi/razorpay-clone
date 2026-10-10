@@ -1,25 +1,16 @@
 package com.payment_gateway.razorpay.merchant.controller;
 
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.payment_gateway.razorpay.merchant.dto.request.WebhookConfigRequest;
 import com.payment_gateway.razorpay.merchant.dto.response.WebhookConfigResponse;
 import com.payment_gateway.razorpay.merchant.security.MerchantContext;
 import com.payment_gateway.razorpay.merchant.service.WebhookConfigService;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Authenticated merchant endpoints for webhook destination configuration.
@@ -33,7 +24,7 @@ public class WebhookConfigController {
     private final WebhookConfigService webhookConfigService;
 
     /**
-    * Registers a webhook target through {@code POST /v1/merchants/webhooks/create} and event subscriptions for the authenticated merchant. The generated signing secret
+     * Registers a webhook target through {@code POST /v1/merchants/webhooks/create} and event subscriptions for the authenticated merchant. The generated signing secret
      * is returned by the create response and is not exposed by later read operations.
      *
      * @param webhookConfigRequest validated target URL, signing secret inputs, and subscribed events
@@ -45,7 +36,7 @@ public class WebhookConfigController {
     }
 
     /**
-    * Lists webhook targets through {@code GET /v1/merchants/webhooks} configured by the authenticated merchant; configurations belonging to other merchants
+     * Lists webhook targets through {@code GET /v1/merchants/webhooks} configured by the authenticated merchant; configurations belonging to other merchants
      * are excluded, and delivery secrets are not returned.
      *
      * @return HTTP 200 with the merchant's webhook configurations
@@ -56,7 +47,7 @@ public class WebhookConfigController {
     }
 
     /**
-    * Retrieves a configuration through {@code GET /v1/merchants/webhooks/{configId}} only when it belongs to the authenticated merchant. A missing or foreign ID is
+     * Retrieves a configuration through {@code GET /v1/merchants/webhooks/{configId}} only when it belongs to the authenticated merchant. A missing or foreign ID is
      * reported as not found, preventing disclosure of another merchant's configuration.
      *
      * @param configId identifier of the configuration to retrieve
@@ -68,22 +59,22 @@ public class WebhookConfigController {
     }
 
     /**
-    * Validates and replaces the target URL and event subscriptions through {@code PUT /v1/merchants/webhooks/{configId}} of a configuration owned by the authenticated
+     * Validates and replaces the target URL and event subscriptions through {@code PUT /v1/merchants/webhooks/{configId}} of a configuration owned by the authenticated
      * merchant; the service rejects IDs that are missing or owned elsewhere.
      *
-     * @param configId identifier of the configuration to update
+     * @param configId             identifier of the configuration to update
      * @param webhookConfigRequest validated target URL and replacement event subscriptions
      * @return HTTP 200 with the updated configuration
      */
     @PutMapping("/{configId}")
     public ResponseEntity<WebhookConfigResponse> update(@PathVariable UUID configId,
-            @Valid @RequestBody WebhookConfigRequest webhookConfigRequest) {
+                                                        @Valid @RequestBody WebhookConfigRequest webhookConfigRequest) {
         return ResponseEntity
                 .ok(webhookConfigService.update(merchantContext.getMerchantId(), configId, webhookConfigRequest));
     }
 
     /**
-    * Deletes a webhook configuration through {@code DELETE /v1/merchants/webhooks/{configId}} within the authenticated merchant's scope. Successful deletion returns no
+     * Deletes a webhook configuration through {@code DELETE /v1/merchants/webhooks/{configId}} within the authenticated merchant's scope. Successful deletion returns no
      * representation in the response body.
      *
      * @param configId identifier of the configuration to delete

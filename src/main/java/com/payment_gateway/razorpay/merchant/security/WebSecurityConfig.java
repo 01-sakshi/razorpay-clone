@@ -26,18 +26,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private static final String[] JWT_ROUTES = {"/v1/actuator/**", "/v1/merchants/**", "/v1/admin/**"};  // /v1/auth/** routes??
+    private static final String[] JWT_ROUTES = {"/v1/actuator/**", "/v1/merchants/**", "/v1/admin/**", "/v1/auth/**"};
     private static final String[] API_KEY_ROUTES = {"/v1/orders/**", "/v1/payments/**", "/v1/vault/**"};
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
     private final IdempotencyFilter idempotencyFilter;
 
-        /**
-         * Configures the stateless JWT chain for matched merchant/admin routes.
-         *
-         * @param httpSecurity builder for the JWT filter chain
-         * @return the configured stateless JWT chain
-         */
+    /**
+     * Configures the stateless JWT chain for matched merchant/admin routes.
+     *
+     * @param httpSecurity builder for the JWT filter chain
+     * @return the configured stateless JWT chain
+     */
     @Bean
     @Order(1)
     public SecurityFilterChain jwtChain(HttpSecurity httpSecurity) {
@@ -55,12 +55,12 @@ public class WebSecurityConfig {
                 .build();
     }
 
-        /**
-         * Configures the stateless API-key chain for payment routes.
-         *
-         * @param httpSecurity builder for the API-key filter chain
-         * @return the configured stateless API-key chain
-         */
+    /**
+     * Configures the stateless API-key chain for payment routes.
+     *
+     * @param httpSecurity builder for the API-key filter chain
+     * @return the configured stateless API-key chain
+     */
     @Bean
     @Order(2)
     public SecurityFilterChain apiKeyChain(HttpSecurity httpSecurity) {
@@ -77,23 +77,24 @@ public class WebSecurityConfig {
                 .build();
     }
 
-        /**
-         * Provides BCrypt encoding so persisted account passwords are hashes rather than plaintext.
-         *
-         * @return password encoder for account authentication
-         */
+    /**
+     * Provides BCrypt encoding so persisted account passwords are hashes rather than plaintext.
+     * From PasswordEncoder interface, specifically BCryptPasswordEncoder type bean will be created as per requirement
+     *
+     * @return password encoder for account authentication
+     */
     @Bean
     public PasswordEncoder encodedPassword() {
         return new BCryptPasswordEncoder();
     }
 
-        /**
-         * Wires email-based user lookup and the configured password encoder into the DAO authentication provider.
-         *
-         * @param merchantUserDetailsService email-based account lookup service
-         * @param passwordEncoder BCrypt password encoder
-         * @return authentication manager backed by the DAO provider
-         */
+    /**
+     * Wires email-based user lookup and the configured password encoder into the DAO authentication provider.
+     *
+     * @param merchantUserDetailsService email-based account lookup service
+     * @param passwordEncoder            BCrypt password encoder
+     * @return authentication manager backed by the DAO provider
+     */
     @Bean
     public AuthenticationManager authenticationManager(MerchantUserDetailsService merchantUserDetailsService,
                                                        PasswordEncoder passwordEncoder) {

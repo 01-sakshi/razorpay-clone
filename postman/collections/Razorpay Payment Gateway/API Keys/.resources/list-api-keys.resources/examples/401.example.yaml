@@ -1,0 +1,28 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1/merchants/api-keys"
+  method: GET
+response:
+  statusCode: 401
+  statusText: ""
+  headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
+    content-type: application/json
+    transfer-encoding: chunked
+    date: Sat, 10 Oct 2026 12:32:17 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
+  body:
+    type: json
+    content: |-
+      {
+        "errorCode": "INVALID_JWT",
+        "errorDescription": "The JWT Token is invalid, expired or malformed",
+        "timeStamp": "2026-10-10T12:32:17.697658500Z"
+      }
+order: 3567215310609526

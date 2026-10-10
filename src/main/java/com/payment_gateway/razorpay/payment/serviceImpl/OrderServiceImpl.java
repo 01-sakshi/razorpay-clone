@@ -59,8 +59,7 @@ public class OrderServiceImpl implements OrderService {
         UUID customerId = null;
         CreateOrderRequest.CustomerDetails customer = createOrderRequest.customer();
         if (customer != null) {
-            // Meaning, the order request is from an active customer account, not a guest
-            // one.
+            // Meaning, the order request is from an active customer account, not a guest one.
             customerId = customerService.findOrCreate(merchantId, customer.name(), customer.phone(), customer.email());
         }
 
@@ -73,9 +72,9 @@ public class OrderServiceImpl implements OrderService {
                 .expiresAt(createOrderRequest.expiresAt() != null ? createOrderRequest.expiresAt()
                         : Instant.now().plusSeconds(defaultOrderExpirySeconds))
                 .build();
-        log.info("Order Record: {}", orderRecord.toString());
+        log.info("Order Record: {}", orderRecord);
         orderRecord = orderRepository.save(orderRecord);
-        log.info("Order Record: {}", orderRecord.toString());
+        log.info("Order Record: {}", orderRecord);
         eventPublisher.publish(EventAggregateType.ORDER, orderRecord.getId(), "ORDER_CREATED",
                 Map.of("orderId", orderRecord.getId(),
                         "merchantId", merchantId.toString(),
@@ -85,7 +84,9 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toResponse(orderRecord);
     }
 
-    /** Loads and maps an order only when both its ID and merchant ID match; foreign IDs are indistinguishable from missing. */
+    /**
+     * Loads and maps an order only when both its ID and merchant ID match; foreign IDs are indistinguishable from missing.
+     */
     @Override
     public OrderResponse get(UUID merchantId, UUID orderId) {
         return orderRepository.findByIdAndMerchant(orderId, merchantId)
@@ -122,7 +123,9 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("order", orderId));
     }
 
-    /** Verifies merchant ownership before querying and mapping all payment attempts for the order. */
+    /**
+     * Verifies merchant ownership before querying and mapping all payment attempts for the order.
+     */
     @Override
     public List<PaymentResponse> list(UUID merchantId, UUID orderId) {
         if (!orderRepository.existsByIdAndMerchant(orderId, merchantId))

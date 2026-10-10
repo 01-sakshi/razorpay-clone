@@ -12,19 +12,26 @@ request:
         "password": "SecurePassword123"
       }
 response:
-  statusCode: 500
+  statusCode: 404
   statusText: ""
   headers:
+    x-content-type-options: nosniff
+    x-xss-protection: "0"
+    cache-control: no-cache, no-store, max-age=0, must-revalidate
+    pragma: no-cache
+    expires: "0"
+    x-frame-options: DENY
     content-type: application/json
     transfer-encoding: chunked
-    date: Sat, 19 Sep 2026 10:41:01 GMT
-    connection: close
+    date: Sat, 10 Oct 2026 11:49:06 GMT
+    keep-alive: timeout=60
+    connection: keep-alive
   body:
     type: json
     content: |-
       {
-        "errorCode": "ERROR",
+        "errorCode": "APPUSER_NOT_FOUND",
         "errorDescription": "APPUSER not found: preetam@example.com",
-        "timeStamp": "2026-09-19T10:41:01.983305500Z"
+        "timeStamp": "2026-10-10T11:49:06.919828100Z"
       }
-order: 4502960696727773
+order: 4502960696728773

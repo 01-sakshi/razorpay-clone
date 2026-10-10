@@ -57,7 +57,7 @@ public class SettlementEngine {
 
             for (var f : futures) {
                 try {
-                    f.get();
+                    f.get();    //blocking
                 } catch (InterruptedException | ExecutionException e) {
                     log.error("Settlement batch future failed ", e);
                 }

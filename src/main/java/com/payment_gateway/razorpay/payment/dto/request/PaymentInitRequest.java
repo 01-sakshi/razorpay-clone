@@ -1,6 +1,7 @@
 package com.payment_gateway.razorpay.payment.dto.request;
 
 import com.payment_gateway.razorpay.common.enums.PaymentMethod;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import java.util.UUID;
  * @param methodDetails method-specific data; may be empty or {@code null} according to the selected gateway
  */
 public record PaymentInitRequest(
+        @NotNull(message = "Order Id is required")
         UUID orderId,
         PaymentMethod paymentMethod,
         Map<String, Object> methodDetails

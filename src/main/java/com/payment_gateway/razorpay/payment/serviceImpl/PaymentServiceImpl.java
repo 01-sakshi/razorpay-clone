@@ -45,10 +45,10 @@ public class PaymentServiceImpl implements PaymentService {
      * increments the attempt count, and persists the routed authorization transition and outbox event. A gateway
      * failure moves the payment to failed; an unexpected immediate-success result currently returns {@code null}.
      *
-    * @param merchantId merchant that owns the order and payment attempt
-    * @param request order identifier, payment method, and method-specific details
-    * @return the persisted payment representation, or {@code null} for the current immediate-success branch
-     * @throws ResourceNotFoundException if the order is absent or belongs to another merchant
+     * @param merchantId merchant that owns the order and payment attempt
+     * @param request    order identifier, payment method, and method-specific details
+     * @return the persisted payment representation, or {@code null} for the current immediate-success branch
+     * @throws ResourceNotFoundException      if the order is absent or belongs to another merchant
      * @throws BusinessRuleViolationException if the order is not payable
      */
     @Override
@@ -98,7 +98,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         switch (paymentResult) {
             case PaymentResult.Pending pending -> // record pattern
-                payment.setProcessorReference(pending.registrationRef());
+                    payment.setProcessorReference(pending.registrationRef());
             case PaymentResult.Failure failure -> {
                 IO.println("failure:" + failure);
                 // payment.setStatus(PaymentStatus.FAILED);
@@ -132,10 +132,10 @@ public class PaymentServiceImpl implements PaymentService {
      * Locks the payment within the merchant scope, applies the capture-request transition, routes capture, persists
      * success or failure details, and writes {@code PAYMENT_STATUS_CHANGED} to the outbox.
      *
-    * @param merchantId merchant that owns the payment
-    * @param paymentId identifier of the payment to capture
-    * @return the persisted payment representation after the gateway result
-     * @throws ResourceNotFoundException if the payment is absent or belongs to another merchant
+     * @param merchantId merchant that owns the payment
+     * @param paymentId  identifier of the payment to capture
+     * @return the persisted payment representation after the gateway result
+     * @throws ResourceNotFoundException       if the payment is absent or belongs to another merchant
      * @throws InvalidStateTransitionException if its current state cannot enter capture
      */
     @Override
@@ -183,20 +183,19 @@ public class PaymentServiceImpl implements PaymentService {
 
     /**
      * Locks the payment and applies the authorization result; approvals proceed immediately through capture, and a
-     * successful capture also marks the order paid. The final payment/order state is persisted and published. The
-     * supplied bank reference and decline error fields are not consumed by the current implementation.
+     * successful capture also marks the order paid. The final payment/order state is persisted and published.
      *
-    * @param paymentId identifier of the payment whose authorization result was received
-    * @param approve whether authorization succeeded
-    * @param bankRef bank reference supplied by the callback; not consumed by the current implementation
-    * @param errorCode gateway error code; not consumed by the current implementation
-    * @param errorDescription gateway error description; not consumed by the current implementation
+     * @param paymentId        identifier of the payment whose authorization result was received
+     * @param approve          whether authorization succeeded
+     * @param bankRef          bank reference supplied by the callback
+     * @param errorCode        gateway error code
+     * @param errorDescription gateway error description
      * @throws ResourceNotFoundException if the payment does not exist
      */
     @Override
     @Transactional
     public void resolveAuthorization(UUID paymentId, boolean approve, String bankRef, String errorCode,
-            String errorDescription) {
+                                     String errorDescription) {
         // Payment payment = paymentRepository.findById(paymentId).orElseThrow(() ->
         // new ResourceNotFoundException("PAYMENT", paymentId));
 
@@ -205,16 +204,17 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (!payment.getStatus().equals(PaymentStatus.AUTHORIZING)) {
             log.warn("Payment is not in authorizing state, paymentId: {}, status: {}", paymentId, payment.getStatus());
+            return;
         }
         OrderRecord orderRecord = payment.getOrderRecord();
 
         /* At this point, payment is in Authorizing state */
         if (approve) {
             paymentTransitionService.apply(payment, PaymentEvent.AUTHORIZE_SUCCESS);
-            payment.setBankReference(payment.getBankReference());
+            payment.setBankReference(bankRef);
             payment.setAuthorizedAt(Instant.now());
 
-            // Auto-capture payment
+            // Auto-capture payment flow
             paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_REQUEST);
             // Send request to payment gateway router to get the payment captured
             PaymentResult capture = paymentGatewayRouter.capture(payment.getMethod(), paymentId);
@@ -230,6 +230,8 @@ public class PaymentServiceImpl implements PaymentService {
             }
         } else {
             paymentTransitionService.apply(payment, PaymentEvent.AUTHORIZE_FAIL);
+            payment.setErrorCode(errorCode);
+            payment.setErrorDescription(errorDescription);
         }
 
         /*

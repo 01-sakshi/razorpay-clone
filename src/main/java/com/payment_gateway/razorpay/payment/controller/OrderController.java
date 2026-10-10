@@ -5,6 +5,7 @@ import com.payment_gateway.razorpay.payment.dto.request.CreateOrderRequest;
 import com.payment_gateway.razorpay.payment.dto.response.OrderResponse;
 import com.payment_gateway.razorpay.payment.dto.response.PaymentResponse;
 import com.payment_gateway.razorpay.payment.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class OrderController {
      * @return HTTP 201 with the persisted order representation
      */
     @PostMapping
-    public ResponseEntity<OrderResponse> create(@RequestBody CreateOrderRequest createOrderRequest) {
+    public ResponseEntity<OrderResponse> create(@Valid @RequestBody CreateOrderRequest createOrderRequest) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(orderService.create(merchantContext.getMerchantId(), createOrderRequest));
     }

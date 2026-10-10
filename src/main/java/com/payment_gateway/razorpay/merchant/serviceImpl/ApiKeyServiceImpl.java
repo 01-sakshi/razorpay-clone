@@ -1,6 +1,7 @@
 package com.payment_gateway.razorpay.merchant.serviceImpl;
 
 import com.payment_gateway.razorpay.common.constants.Constants;
+import com.payment_gateway.razorpay.common.constants.ErrorCode;
 import com.payment_gateway.razorpay.common.exceptions.ApiKeyDisabledException;
 import com.payment_gateway.razorpay.common.exceptions.ResourceNotFoundException;
 import com.payment_gateway.razorpay.common.util.RandomizerUtil;
@@ -60,7 +61,9 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         return new ApiKeyCreateResponse(apiKey.getId(), apiKey.getKeyId(), keySecret, apiKey.getEnvironment());
     }
 
-    /** Maps all keys for the merchant to public metadata; secret hashes are not included in the response DTO. */
+    /**
+     * Maps all keys for the merchant to public metadata; secret hashes are not included in the response DTO.
+     */
     @Override
     public List<ApiKeyResponse> list(UUID merchantId) {
         return apiKeyMapper.toApikeyResponseList(apiKeyRepository.findByMerchantId(merchantId));
@@ -95,7 +98,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
      * a new BCrypt hash; evicts cached metadata before returning replacement credentials.
      *
      * @throws ResourceNotFoundException if the key is absent or belongs to another merchant
-     * @throws ApiKeyDisabledException if the key has already been revoked
+     * @throws ApiKeyDisabledException   if the key has already been revoked
      */
     @Override
     @Transactional
@@ -103,17 +106,18 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         Optional<ApiKey> optionalApiKey = apiKeyRepository.findApiKeyByKeyIdAndMerchantId(keyId, merchantId);
         if (optionalApiKey.isEmpty()) throw new ResourceNotFoundException("apiKey", keyId);
 
+        String newSecretKey = RandomizerUtil.randomBase64(40);
         ApiKey apiKey = optionalApiKey.get();
         if (!apiKey.getEnabled())
-            throw new ApiKeyDisabledException("API_KEY_DISABLED", "APIKEY", keyId, "Cannot rotate a disabled API Key");
+            throw new ApiKeyDisabledException(ErrorCode.API_KEY_DISABLED, "APIKEY", keyId, "Cannot rotate a disabled API Key");
         apiKey.setPreviousKeySecretHash(apiKey.getKeySecretHash());
         apiKey.setGracePeriodExpiresAt(Instant.now().plusSeconds(60 * 60));
-        apiKey.setKeySecretHash(BCRYPT.encode(RandomizerUtil.randomBase64(40)));
+        apiKey.setKeySecretHash(BCRYPT.encode(newSecretKey));
         apiKey.setUpdatedAt(Instant.now());
         apiKey.setUpdatedBy(Constants.SYSTEM);
 
         apiKeyCache.evict(keyId);   //Remove entry from cache as well
         apiKey = apiKeyRepository.save(apiKey);
-        return apiKeyMapper.toApiKeyCreateResponse(apiKey);
+        return apiKeyMapper.toApiKeyCreateResponse(apiKey, newSecretKey);
     }
 }

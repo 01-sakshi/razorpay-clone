@@ -1,14 +1,5 @@
 package com.payment_gateway.razorpay.merchant.serviceImpl;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.security.crypto.encrypt.BytesEncryptor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.payment_gateway.razorpay.common.exceptions.ResourceNotFoundException;
 import com.payment_gateway.razorpay.common.util.RandomizerUtil;
 import com.payment_gateway.razorpay.merchant.dto.request.WebhookConfigRequest;
@@ -19,9 +10,16 @@ import com.payment_gateway.razorpay.merchant.mapper.WebhookConfigMapper;
 import com.payment_gateway.razorpay.merchant.repository.MerchantRepository;
 import com.payment_gateway.razorpay.merchant.repository.WebhookConfigRepository;
 import com.payment_gateway.razorpay.merchant.service.WebhookConfigService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.encrypt.BytesEncryptor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +66,8 @@ public class WebhookConfigServiceImpl implements WebhookConfigService {
     @Override
     public List<WebhookConfigResponse> getAll(UUID merchantId) {
         return webhookConfigRepository.findByMerchantId(merchantId).stream()
-                .map(merchantWebhookConfig -> webhookConfigMapper.toResponse(merchantWebhookConfig, null)).toList();
+                .map(merchantWebhookConfig ->
+                        webhookConfigMapper.toResponse(merchantWebhookConfig, null)).toList();
     }
 
     /**
@@ -87,7 +86,7 @@ public class WebhookConfigServiceImpl implements WebhookConfigService {
     @Override
     @Transactional
     public WebhookConfigResponse update(UUID merchantId, UUID merchantConfigId,
-            WebhookConfigRequest webhookConfigRequest) {
+                                        WebhookConfigRequest webhookConfigRequest) {
         MerchantWebhookConfig merchantWebhookConfig = fetchWebhookConfig(merchantId, merchantConfigId);
         merchantWebhookConfig.setTargetUrl(webhookConfigRequest.targetUrl());
         merchantWebhookConfig.setEventTypes(webhookConfigRequest.eventTypes());
@@ -95,7 +94,9 @@ public class WebhookConfigServiceImpl implements WebhookConfigService {
         return webhookConfigMapper.toResponse(merchantWebhookConfig, null);
     }
 
-    /** Deletes only the row matching both merchant and configuration IDs. */
+    /**
+     * Deletes only the row matching both merchant and configuration IDs.
+     */
     @Override
     @Transactional
     public void delete(UUID merchantId, UUID webhookConfigId) {
